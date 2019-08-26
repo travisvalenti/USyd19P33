@@ -32,8 +32,10 @@ type State = {
     },
   },
   isSignedIn: boolean,
+  isLoading: boolean
   gapi?: any,
-  expandedMessageId?: string
+  expandedMessageId?: string,
+  errorMessage?: string
 }
 
 class App extends React.Component<Props, State> {
@@ -43,7 +45,8 @@ class App extends React.Component<Props, State> {
 
     this.state = {
       isSignedIn: false,
-      messages: {}
+      messages: {},
+      isLoading: true
     }
   }
 
@@ -69,17 +72,26 @@ class App extends React.Component<Props, State> {
         scope: SCOPES
       })
         .then(() => {
-          this.setState({ gapi })
+          this.setState({ gapi, isLoading: false })
           gapi.auth2.getAuthInstance().isSignedIn
             .listen((isSignedIn: boolean) => this.setState({ isSignedIn }))
   
           this.setState({ isSignedIn: gapi.auth2.getAuthInstance().isSignedIn.get() })
         })
-        .catch(console.error)
+        .catch((error: Error) => {
+          console.error(error)
+          this.setState({
+            isLoading: false,
+            errorMessage: error.message
+          })
+        })
     })
   }
 
   loadMessages = () => {
+    this.setState({
+      isLoading: true
+    })
     this.state.gapi.client
       .gmail
       .users
@@ -105,28 +117,41 @@ class App extends React.Component<Props, State> {
             const mail = JSON.parse(requestResponse.body)
             messages[mail.id] = mail
           })
-          this.setState({ messages })
+          this.setState({ messages, isLoading: false })
         })
         
       })
-      .catch((error: Error) => console.error(error))
+      .catch((error: Error) => {
+        console.error(error)
+        this.setState({
+          isLoading: false,
+          errorMessage: error.message || JSON.parse((error as any).body).error.message
+        })
+      })
   }
 
   setExpanded = (messageId: string) => {
     this.setState({
       expandedMessageId: messageId === this.state.expandedMessageId ? undefined : messageId
     })
+    setTimeout(() => {
+      const element = document.getElementById(messageId)
+      if (!element) return
+      element.scrollIntoView()
+    }, 10)
   }
 
   // This function is called whenever the props change or this.setState is called
   render () {
     return (<div className="App">
+      { this.state.isSignedIn
+        ? <button className="authButton" onClick={ () => this.state.gapi.auth2.getAuthInstance().signOut() } disabled={this.state.isLoading}>Sign Out</button>
+        : <button className="authButton" onClick={ () => this.state.gapi.auth2.getAuthInstance().signIn() } disabled={this.state.isLoading}>Sign In</button>
+      }
+      <button onClick={this.loadMessages} disabled={this.state.isLoading}>Load Messages</button>
+      { this.state.errorMessage && <p style={{color: 'red', textAlign: 'center'}}>{ this.state.errorMessage }</p>}
+      {this.state.isLoading && <div className="loadingBar"><div></div></div>}      
       { this.state.gapi && <>
-        { this.state.isSignedIn
-          ? <button onClick={ () => this.state.gapi.auth2.getAuthInstance().signOut() }>Sign Out</button>
-          : <button onClick={ () => this.state.gapi.auth2.getAuthInstance().signIn() }>Sign In</button>
-        }
-        <button onClick={this.loadMessages}>Load Messages</button>
         { this.state.isSignedIn && (<>
           <div className="mailGroup">
             { Object.values(this.state.messages).map(message => {
@@ -142,7 +167,7 @@ class App extends React.Component<Props, State> {
                   .split('_').join('/')
                 content = blob && atob(blob)
               }
-              return (<div key={ message.id } onClick={() => this.setExpanded(message.id)} className={`mailItem ${message.labelIds.includes('UNREAD') ? 'unread' : ''}`}>
+              return (<div key={ message.id } id={message.id} onClick={() => this.setExpanded(message.id)} className={`mailItem ${message.labelIds.includes('UNREAD') ? 'unread' : ''}`}>
                 <div className="mailItemHeader">
                   <span>{ from && from.value }</span>
                   <br />
@@ -155,6 +180,7 @@ class App extends React.Component<Props, State> {
               </div>)
             }) }
           </div>
+          { Object.values(this.state.messages).length !== 0 && <p style={{textAlign: 'center'}}>There are more messages, but we haven't made a way to load them yet, sorry.</p> }
         </>)}
 
       </>}
