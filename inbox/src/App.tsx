@@ -17,14 +17,16 @@ function App() {
 
 function Header() {
   return (
-    <ul>
-      <li>
-        <Link to="/">Dashboard</Link>
-      </li>
-      <li>
-        <Link to="/mail">Mail</Link>
-      </li>
-    </ul>
+    <div className="header">
+      <ul>
+        <li>
+          <Link to="/">Dashboard</Link>
+        </li>
+        <li>
+          <Link to="/mail">Mail</Link>
+        </li>
+      </ul>
+    </div>
   );
 }
 
