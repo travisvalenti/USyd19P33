@@ -1,6 +1,36 @@
 import React from 'react'
+import { BrowserRouter as Router, Route, Link } from "react-router-dom"
 
 import './index.css'
+
+function App() {
+  return (
+    <Router>
+      <div>
+        <Header />
+        <Route exact path="/" component={Dashboard} />
+        <Route path="/mail" component={Mail} />
+      </div>
+    </Router>
+  );
+}
+
+function Header() {
+  return (
+    <ul>
+      <li>
+        <Link to="/">Dashboard</Link>
+      </li>
+      <li>
+        <Link to="/mail">Mail</Link>
+      </li>
+    </ul>
+  );
+}
+
+function Dashboard() {
+  return <h2>Dashboard</h2>;
+}
 
 type Props = {}
 type State = {
@@ -38,7 +68,7 @@ type State = {
   errorMessage?: string
 }
 
-class App extends React.Component<Props, State> {
+class Mail extends React.Component<Props, State> {
 
   constructor (props: Props) {
     super(props)
@@ -143,7 +173,7 @@ class App extends React.Component<Props, State> {
 
   // This function is called whenever the props change or this.setState is called
   render () {
-    return (<div className="App">
+    return (<div className="Mail">
       { this.state.isSignedIn
         ? <button className="authButton" onClick={ () => this.state.gapi.auth2.getAuthInstance().signOut() } disabled={this.state.isLoading}>Sign Out</button>
         : <button className="authButton" onClick={ () => this.state.gapi.auth2.getAuthInstance().signIn() } disabled={this.state.isLoading}>Sign In</button>
