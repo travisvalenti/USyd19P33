@@ -136,3 +136,44 @@ code {
   font-size: 150%;
   text-decoration: none;
 }
+
+.dashboard {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  height: 100%;
+}
+​
+.dashboard > div{
+  width: 4rem;
+  margin: 10px;
+}
+
+.icon {
+  width: 8rem;
+  height: 8rem;
+  background: white;
+  box-shadow: 2px 1px 3px grey;
+  border-radius: 2px;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+
+}
+
+.icon > img {
+  width: 80%;
+  margin: auto;
+}
+
+.label {
+  margin-top: 3px;
+  text-align: center;
+  width: 100%;
+  display: inline-block;
+}
+.picture {
+  margin-right: 150px;
+  margin-top: 150px;
+}
