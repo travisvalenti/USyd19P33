@@ -16,17 +16,21 @@
   float: left;
   box-sizing: border-box;
   border-radius: 0 0 3px 3px;
-  margin-left: 10px;
+  margin-left: 1em;
+  color: white;
 }
 
-.Header li:hover, .Header li.selected {
+.Header li:hover {
+  color: #ddd;
+}
+
+.Header li.selected{
   background: #1a59d6;
   height: 63px;
+  color: white;
 }
 
-
 .Header a {
-  color: #ffffff;
   font-family: Arial;
   font-size: 150%;
   text-decoration: none;
