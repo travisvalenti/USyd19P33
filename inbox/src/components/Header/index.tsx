@@ -13,9 +13,14 @@ const Header = ({ location }: RouteComponentProps) => {
             Dashboard
           </li>
         </Link>
-        <Link to="/mail">
-          <li className={location.pathname === '/mail' ? 'selected' : undefined}>
-            Mail
+        <Link to="/mail/write">
+          <li className={location.pathname === '/mail/write' ? 'selected' : undefined}>
+            <i className="material-icons">edit</i> Write
+          </li>
+        </Link>
+        <Link to="/mail/read">
+          <li className={location.pathname === '/mail/read' ? 'selected' : undefined}>
+            <i className="material-icons">email</i> Read
           </li>
         </Link>
       </ul>

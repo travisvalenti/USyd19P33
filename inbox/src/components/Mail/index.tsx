@@ -37,7 +37,9 @@ type State = {
   isLoading: boolean
   gapi?: any,
   expandedMessageId?: string,
-  errorMessage?: string
+  errorMessage?: string,
+  showRead: boolean,
+  importantOnly: boolean
 }
 
 class Mail extends React.Component<Props, State> {
@@ -48,7 +50,9 @@ class Mail extends React.Component<Props, State> {
     this.state = {
       isSignedIn: false,
       messages: {},
-      isLoading: true
+      isLoading: true,
+      showRead: false,
+      importantOnly: false
     }
   }
 
@@ -153,6 +157,10 @@ class Mail extends React.Component<Props, State> {
       }
       <button onClick={this.loadMessages} disabled={this.state.isLoading}>Load Messages</button>
       {this.state.errorMessage && <p style={{ color: 'red', textAlign: 'center' }}>{this.state.errorMessage}</p>}
+      { Object.keys(this.state.messages).length > 0 && <>
+        <div><input type="checkbox" checked={this.state.showRead} onChange={(event) => this.setState({ showRead: event.target.checked })} /> Show Read</div>
+        <div><input type="checkbox" checked={this.state.importantOnly} onChange={(event) => this.setState({ importantOnly: event.target.checked })} /> Only Important</div>
+      </> }
       {this.state.isLoading && <LoadingBar />}
       {this.state.gapi && <>
         {this.state.isSignedIn && (<>
@@ -170,7 +178,10 @@ class Mail extends React.Component<Props, State> {
                   .split('_').join('/')
                 content = blob && atob(blob)
               }
-              return (<div key={message.id} id={message.id} onClick={() => this.setExpanded(message.id)} className={`mailItem ${message.labelIds.includes('UNREAD') ? 'unread' : ''}`}>
+              return ( (message.labelIds.includes('UNREAD') || this.state.showRead) &&
+                (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
+                message.payload.parts
+                && <div key={message.id} id={message.id} onClick={() => this.setExpanded(message.id)} className={`mailItem ${message.labelIds.includes('UNREAD') ? 'unread' : ''}`}>
                 <div className="mailItemHeader">
                   <span>{from && from.value}</span>
                   <br />
