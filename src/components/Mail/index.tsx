@@ -3,6 +3,7 @@ import React from 'react'
 import './styles.css'
 
 import LoadingBar from '../ui/LoadingBar'
+import Button from '../Button'
 
 type Props = {}
 type State = {
@@ -152,10 +153,10 @@ class Mail extends React.Component<Props, State> {
   render() {
     return (<div className="Mail">
       {this.state.isSignedIn
-        ? <button className="authButton" onClick={() => this.state.gapi.auth2.getAuthInstance().signOut()} disabled={this.state.isLoading}>Sign Out</button>
-        : <button className="authButton" onClick={() => this.state.gapi.auth2.getAuthInstance().signIn()} disabled={this.state.isLoading}>Sign In</button>
+        ? <Button className="authButton" onClick={() => this.state.gapi.auth2.getAuthInstance().signOut()} disabled={this.state.isLoading}>Sign Out</Button>
+        : <Button className="authButton" onClick={() => this.state.gapi.auth2.getAuthInstance().signIn()} disabled={this.state.isLoading}>Sign In</Button>
       }
-      <button onClick={this.loadMessages} disabled={this.state.isLoading}>Load Messages</button>
+      <Button onClick={this.loadMessages} disabled={this.state.isLoading}>Load Messages</Button>
       {this.state.errorMessage && <p style={{ color: 'red', textAlign: 'center' }}>{this.state.errorMessage}</p>}
       { Object.keys(this.state.messages).length > 0 && <>
         <div><input type="checkbox" checked={this.state.showRead} onChange={(event) => this.setState({ showRead: event.target.checked })} /> Show Read</div>
