@@ -3,7 +3,8 @@
 exports[`Button component Matches the snapshot When disabled=true 1`] = `
 <div>
   <button
-    class="Button undefined"
+    class="Button"
+    disabled
   >
     Button Content
   </button>
