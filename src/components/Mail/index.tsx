@@ -3,7 +3,7 @@ import React from 'react'
 import './styles.css'
 
 import LoadingBar from '../ui/LoadingBar'
-import Button from '../Button'
+import Button from '../ui/Button'
 
 type Props = {}
 type State = {
