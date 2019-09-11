@@ -11,9 +11,10 @@ type Props = {
 
 
 const Button: React.FC<Props> = props => {
+  let className = 'Button'
+  if (props.className !== undefined) className += ' ' + props.className
   return (
-    
-    <button className={'Button ' + props.className}>
+    <button className={className} disabled={props.disabled} onClick={props.onClick}>
       {
         props.children
       }
