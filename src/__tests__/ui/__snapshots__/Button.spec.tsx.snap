@@ -1,10 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Button component Matches the snapshot When Disabled 1`] = `
+exports[`Button component Matches the snapshot When disabled=true 1`] = `
 <div>
   <button
-    class="Button"
-    disabled
+    class="Button undefined"
   >
     Button Content
   </button>
@@ -34,7 +33,7 @@ exports[`Button component Matches the snapshot With just onClick 1`] = `
 exports[`Button component Matches the snapshot With one className 1`] = `
 <div>
   <button
-    class="Button oneClassName twoClassName"
+    class="Button oneClassName"
   >
     Button Content
   </button>
@@ -44,7 +43,7 @@ exports[`Button component Matches the snapshot With one className 1`] = `
 exports[`Button component Matches the snapshot With two classNames 1`] = `
 <div>
   <button
-    class="Button oneClassName"
+    class="Button oneClassName twoClassName"
   >
     Button Content
   </button>

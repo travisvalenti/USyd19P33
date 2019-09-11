@@ -15,18 +15,18 @@ describe('Button component', () => {
       expect(component.container).toMatchSnapshot()
     })
 
-    test('When Disabled', () => {
+    test('When disabled=true', () => {
       const component = render(<Button disabled>Button Content</Button>)
       expect(component.container).toMatchSnapshot()
     })
 
     test('With one className', () => {
-      const component = render(<Button className="oneClassName twoClassName">Button Content</Button>)
+      const component = render(<Button className="oneClassName">Button Content</Button>)
       expect(component.container).toMatchSnapshot()
     })
 
     test('With two classNames', () => {
-      const component = render(<Button className="oneClassName">Button Content</Button>)
+      const component = render(<Button className="oneClassName twoClassName">Button Content</Button>)
       expect(component.container).toMatchSnapshot()
     })
 
