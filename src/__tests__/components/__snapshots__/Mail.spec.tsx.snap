@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Mail component should match snapshot 1`] = `
+<div>
+  <div
+    class="Mail"
+  >
+    <button
+      class="Button authButton"
+      disabled=""
+    >
+      Sign In
+    </button>
+    <button
+      class="Button"
+      disabled=""
+    >
+      Load Messages
+    </button>
+    <div
+      class="LoadingBar"
+    >
+      <div />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Mail component should query emails when asked to load 1`] = `
+<div>
+  <div
+    class="Mail"
+  >
+    <button
+      class="Button authButton"
+      disabled=""
+    >
+      Sign In
+    </button>
+    <button
+      class="Button"
+      disabled=""
+    >
+      Load Messages
+    </button>
+    <div
+      class="LoadingBar"
+    >
+      <div />
+    </div>
+  </div>
+</div>
+`;

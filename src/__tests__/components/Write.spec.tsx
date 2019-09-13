@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, cleanup, RenderResult } from '@testing-library/react'
+import { render, cleanup } from '@testing-library/react'
 
 import Write from '../../components/Write'
 
