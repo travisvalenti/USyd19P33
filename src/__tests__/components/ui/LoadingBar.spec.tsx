@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import LoadingBar from '../../components/ui/LoadingBar'
+import LoadingBar from '../../../components/ui/LoadingBar'
 
 describe('LoadingBar component', () => {
   test('Matches the snapshot', () => {

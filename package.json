@@ -38,6 +38,7 @@
     ]
   },
   "devDependencies": {
+    "history": "^4.10.1",
     "react-test-renderer": "^16.9.0"
   }
 }
