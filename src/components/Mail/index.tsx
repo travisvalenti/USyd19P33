@@ -62,7 +62,7 @@ class Mail extends React.Component<Props, State> {
     const gapi = (window as any).gapi
     gapi.load('client:auth2', () => {
       // Client ID and API key from the Developer Console
-      var CLIENT_ID = '89646939632-bgln4kl1okrjeefebjhq3nao3k1o7nd0.apps.googleusercontent.com'
+      var CLIENT_ID = '89646939632-a5i06tvc4np3vj82m0h1nlept16prom8.apps.googleusercontent.com'
       var API_KEY = 'AIzaSyBpdgjg3vJYGKcFn4DcxVbi2AEBMeE_KX4'
 
       // Array of API discovery doc URLs for APIs used by the quickstart
@@ -87,10 +87,11 @@ class Mail extends React.Component<Props, State> {
           this.setState({ isSignedIn: gapi.auth2.getAuthInstance().isSignedIn.get() })
         })
         .catch((error: Error) => {
+          console.error('GApi failed to load')
           console.error(error)
           this.setState({
             isLoading: false,
-            errorMessage: error.message
+            errorMessage: `GApi failed to load ${error.message ? error.message : ''}`
           })
         })
     })
@@ -154,15 +155,15 @@ class Mail extends React.Component<Props, State> {
     return (<div className="Mail">
       {this.state.isSignedIn
         ? <Button className="authButton" onClick={() => this.state.gapi.auth2.getAuthInstance().signOut()} disabled={this.state.isLoading}>Sign Out</Button>
-        : <Button className="authButton" onClick={() => this.state.gapi.auth2.getAuthInstance().signIn()} disabled={this.state.isLoading}>Sign In</Button>
+        : <Button className="authButton" onClick={() => this.state.gapi.auth2.getAuthInstance().signIn()} disabled={this.state.isLoading || !this.state.gapi}>Sign In</Button>
       }
-      <Button onClick={this.loadMessages} disabled={this.state.isLoading}>Load Messages</Button>
+      <Button onClick={this.loadMessages} disabled={this.state.isLoading || !this.state.isSignedIn}>Load Messages</Button>
       {this.state.errorMessage && <p style={{ color: 'red', textAlign: 'center' }}>{this.state.errorMessage}</p>}
       { Object.keys(this.state.messages).length > 0 && <>
         <div><input type="checkbox" checked={this.state.showRead} onChange={(event) => this.setState({ showRead: event.target.checked })} /> Show Read</div>
         <div><input type="checkbox" checked={this.state.importantOnly} onChange={(event) => this.setState({ importantOnly: event.target.checked })} /> Only Important</div>
       </> }
-      {this.state.isLoading && <LoadingBar />}
+      { (this.state.isLoading) && <LoadingBar /> }
       {this.state.gapi && <>
         {this.state.isSignedIn && (<>
           <div className="mailGroup">
