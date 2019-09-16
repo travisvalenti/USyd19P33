@@ -32,17 +32,6 @@ const Dashboard: React.FC = () => {
         </a>
         <span className="label">Drive</span>
       </div>
-      <div className="picture">
-        <div>
-          <a href="https://www.youtube.com">
-            <div className="icon">
-              <img src='https://img.etimg.com/thumb/msid-69533333,width-643,imgsize-35861,resizemode-4/youtube-on-android-may-get-bigger-better-video-streaming-giant-tests-enlarged-play-cancel-buttons.jpg' alt="YouTube" width="130" />
-            </div>
-          </a>
-          <span className="label">YouTube</span>
-        </div>
-      </div>
-
     </div>
   )
 }
