@@ -1,5 +1,6 @@
 import React from 'react'
 import MessageType from '../../../@types/MessageType'
+import Button from '../../ui/Button'
 
 type Props = {
   message: MessageType,
@@ -20,6 +21,23 @@ const Message: React.FC<Props> = (props: Props) => {
       .split('_').join('/')
     content = blob && atob(blob)
   }
+
+  const downloadAttachments = message => {
+    let parts = message.payload.parts;
+    for (let i = 0; i < parts.length; i++) {
+      let part = parts[i];
+      if (part.filename && part.filename.length > 0) {
+        let attachId = part.body.attachmentId;
+        let request = gapi.client.gmail.users.messages.attachments.get({
+          'id': attachId,
+          'messageId': message.id,
+          'userId': 'me'
+        });
+        request.execute(function(attachment){});
+      }
+    }
+  }
+
   return props.message.payload.parts
     ? <div id={props.message.id} onClick={() => props.onClick()} className={`mailItem ${props.message.labelIds.includes('UNREAD') ? 'unread' : ''}`}>
       <div className="mailItemHeader">
@@ -29,6 +47,7 @@ const Message: React.FC<Props> = (props: Props) => {
         {props.message.labelIds.map(label => (<span key={label} className="chip">{label}</span>))}
       </div>
       {props.isExpanded && (<div className="mailItemContent">
+        <Button onClick={downloadAttachments(props.message)} className="download" disabled={false} children="Download Attachments"/>
         <iframe title={props.message.id} srcDoc={content} frameBorder="0" seamless></iframe>
       </div>)}
     </div>
