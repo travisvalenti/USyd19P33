@@ -7,21 +7,17 @@ exports[`Mail component should match snapshot 1`] = `
   >
     <button
       class="Button authButton"
-      disabled=""
     >
-      Sign In
+      Sign Out
     </button>
     <button
       class="Button"
-      disabled=""
     >
       Load Messages
     </button>
     <div
-      class="LoadingBar"
-    >
-      <div />
-    </div>
+      class="mailGroup"
+    />
   </div>
 </div>
 `;

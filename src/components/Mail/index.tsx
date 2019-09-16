@@ -5,7 +5,10 @@ import './styles.css'
 import LoadingBar from '../ui/LoadingBar'
 import Button from '../ui/Button'
 
-type Props = {}
+type Props = {
+  isSignedIn: boolean
+}
+
 type State = {
   messages: {
     [key: string]: {
@@ -34,8 +37,7 @@ type State = {
       }
     },
   },
-  isSignedIn: boolean,
-  isLoading: boolean
+  isLoading: boolean,
   expandedMessageId?: string,
   errorMessage?: string,
   showRead: boolean,
@@ -43,56 +45,15 @@ type State = {
 }
 
 class Mail extends React.Component<Props, State> {
-
   constructor(props: Props) {
     super(props)
 
     this.state = {
-      isSignedIn: false,
       messages: {},
-      isLoading: true,
+      isLoading: false,
       showRead: false,
       importantOnly: false
     }
-  }
-
-  // This function is called after the component is first added to the DOM
-  componentDidMount () {
-    gapi.load('client:auth2', async () => {
-      // Client ID and API key from the Developer Console
-      var CLIENT_ID = '89646939632-a5i06tvc4np3vj82m0h1nlept16prom8.apps.googleusercontent.com'
-      var API_KEY = 'AIzaSyBpdgjg3vJYGKcFn4DcxVbi2AEBMeE_KX4'
-
-      // Array of API discovery doc URLs for APIs used by the quickstart
-      var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"]
-
-      // Authorization scopes required by the API multiple scopes can be
-      // included, separated by spaces.
-      var SCOPES = 'https://www.googleapis.com/auth/gmail.readonly'
-
-      gapi.client.init({
-        apiKey: API_KEY,
-        clientId: CLIENT_ID,
-        discoveryDocs: DISCOVERY_DOCS,
-        scope: SCOPES
-      })
-        .then(() => {
-          console.log('GAPI loaded')
-          this.setState({ isLoading: false })
-          gapi.auth2.getAuthInstance().isSignedIn
-            .listen((isSignedIn: boolean) => this.setState({ isSignedIn }))
-
-          this.setState({ isSignedIn: gapi.auth2.getAuthInstance().isSignedIn.get() })
-        })
-        .catch((error: Error) => {
-          console.error('GApi failed to load')
-          console.error(error)
-          this.setState({
-            isLoading: false,
-            errorMessage: `GApi failed to load ${error.message ? error.message : ''}`
-          })
-        })
-    })
   }
 
   loadMessages = () => {
@@ -152,11 +113,11 @@ class Mail extends React.Component<Props, State> {
   // This function is called whenever the props change or this.setState is called
   render() {
     return (<div className="Mail">
-      {this.state.isSignedIn
+      {this.props.isSignedIn
         ? <Button className="authButton" onClick={() => gapi.auth2.getAuthInstance().signOut()} disabled={this.state.isLoading}>Sign Out</Button>
         : <Button className="authButton" onClick={() => gapi.auth2.getAuthInstance().signIn()} disabled={this.state.isLoading}>Sign In</Button>
       }
-      <Button onClick={this.loadMessages} disabled={this.state.isLoading || !this.state.isSignedIn}>Load Messages</Button>
+      <Button onClick={this.loadMessages} disabled={this.state.isLoading || !this.props.isSignedIn}>Load Messages</Button>
       {this.state.errorMessage && <p style={{ color: 'red', textAlign: 'center' }}>{this.state.errorMessage}</p>}
       { Object.keys(this.state.messages).length > 0 && <>
         <div><input type="checkbox" checked={this.state.showRead} onChange={(event) => this.setState({ showRead: event.target.checked })} /> Show Read</div>
@@ -164,7 +125,7 @@ class Mail extends React.Component<Props, State> {
       </> }
       { (this.state.isLoading) && <LoadingBar /> }
       { gapi && <>
-        {this.state.isSignedIn && (<>
+        {this.props.isSignedIn && (<>
           <div className="mailGroup">
             {Object.values(this.state.messages).map(message => {
               const from = message.payload.headers.find(header => header.name === 'From')

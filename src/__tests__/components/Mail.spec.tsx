@@ -1,11 +1,9 @@
 import React from 'react'
-import { render, cleanup, fireEvent, wait } from '@testing-library/react'
+import { render, cleanup } from '@testing-library/react'
 
 import Mail from '../../components/Mail'
 
 describe('Mail component', () => {
-  let gapi: any
-
   afterEach(cleanup)
 
   beforeEach(() => {
@@ -47,7 +45,7 @@ describe('Mail component', () => {
   })
 
   test('should match snapshot', () => {
-    const component = render(<Mail />)
+    const component = render(<Mail isSignedIn={true}/>)
     expect(component.container).toMatchSnapshot()
   })
 
