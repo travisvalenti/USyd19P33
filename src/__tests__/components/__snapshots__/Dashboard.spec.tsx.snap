@@ -71,30 +71,6 @@ exports[`Dashboard component Matches the snapshot 1`] = `
         Drive
       </span>
     </div>
-    <div
-      class="picture"
-    >
-      <div>
-        <a
-          href="https://www.youtube.com"
-        >
-          <div
-            class="icon"
-          >
-            <img
-              alt="YouTube"
-              src="https://img.etimg.com/thumb/msid-69533333,width-643,imgsize-35861,resizemode-4/youtube-on-android-may-get-bigger-better-video-streaming-giant-tests-enlarged-play-cancel-buttons.jpg"
-              width="130"
-            />
-          </div>
-        </a>
-        <span
-          class="label"
-        >
-          YouTube
-        </span>
-      </div>
-    </div>
   </div>
 </div>
 `;
