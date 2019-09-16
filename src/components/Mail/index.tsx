@@ -1,9 +1,12 @@
 import React from 'react'
 
+import MessageType from '../../@types/MessageType'
+
 import './styles.css'
 
 import LoadingBar from '../ui/LoadingBar'
 import Button from '../ui/Button'
+import Message from './Message'
 
 type Props = {
   isSignedIn: boolean
@@ -11,31 +14,7 @@ type Props = {
 
 type State = {
   messages: {
-    [key: string]: {
-      id: string,
-      threadId: string,
-      snippet?: string,
-      labelIds: string[],
-      payload: {
-        body: any,
-        headers: {
-          name: string,
-          value: string,
-        }[],
-        parts: {
-          mimeType: string,
-          partId: string,
-          body: {
-            data: string,
-            size: number,
-          },
-          headers: {
-            name: string,
-            value: string,
-          }[]
-        }[]
-      }
-    },
+    [key: string]: MessageType,
   },
   isLoading: boolean,
   expandedMessageId?: string,
@@ -127,34 +106,11 @@ class Mail extends React.Component<Props, State> {
       { gapi && <>
         {this.props.isSignedIn && (<>
           <div className="mailGroup">
-            {Object.values(this.state.messages).map(message => {
-              const from = message.payload.headers.find(header => header.name === 'From')
-
-              // const content = part && atob(part.body.data) // atob decodes a Base64 string
-              let content: string | undefined = ''
-              if (this.state.expandedMessageId === message.id) {
-                const part = message.payload.parts
-                  .find(part => part.mimeType === 'text/html')
-                const blob = part && part.body.data
-                  .split('-').join('+')
-                  .split('_').join('/')
-                content = blob && atob(blob)
-              }
-              return ( (message.labelIds.includes('UNREAD') || this.state.showRead) &&
-                (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
-                message.payload.parts
-                && <div key={message.id} id={message.id} onClick={() => this.setExpanded(message.id)} className={`mailItem ${message.labelIds.includes('UNREAD') ? 'unread' : ''}`}>
-                <div className="mailItemHeader">
-                  <span>{from && from.value}</span>
-                  <br />
-                  <p className="snippet">{message.snippet}</p>
-                  {message.labelIds.map(label => (<span key={label} className="chip">{label}</span>))}
-                </div>
-                {this.state.expandedMessageId === message.id && (<div className="mailItemContent">
-                  <iframe title={message.id} srcDoc={content} frameBorder="0" seamless></iframe>
-                </div>)}
-              </div>)
-            })}
+            {Object.values(this.state.messages).map(message =>
+              (message.labelIds.includes('UNREAD') || this.state.showRead) &&
+              (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
+              <Message key={message.id} message={message} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
+            )}
           </div>
           {Object.values(this.state.messages).length !== 0 && <p style={{ textAlign: 'center' }}>There are more messages, but we haven't made a way to load them yet, sorry.</p>}
         </>)}
