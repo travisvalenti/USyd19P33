@@ -36,7 +36,6 @@ type State = {
   },
   isSignedIn: boolean,
   isLoading: boolean
-  gapi?: any,
   expandedMessageId?: string,
   errorMessage?: string,
   showRead: boolean,
@@ -58,9 +57,8 @@ class Mail extends React.Component<Props, State> {
   }
 
   // This function is called after the component is first added to the DOM
-  componentDidMount() {
-    const gapi = (window as any).gapi
-    gapi.load('client:auth2', () => {
+  componentDidMount () {
+    gapi.load('client:auth2', async () => {
       // Client ID and API key from the Developer Console
       var CLIENT_ID = '89646939632-a5i06tvc4np3vj82m0h1nlept16prom8.apps.googleusercontent.com'
       var API_KEY = 'AIzaSyBpdgjg3vJYGKcFn4DcxVbi2AEBMeE_KX4'
@@ -80,7 +78,7 @@ class Mail extends React.Component<Props, State> {
       })
         .then(() => {
           console.log('GAPI loaded')
-          this.setState({ gapi, isLoading: false })
+          this.setState({ isLoading: false })
           gapi.auth2.getAuthInstance().isSignedIn
             .listen((isSignedIn: boolean) => this.setState({ isSignedIn }))
 
@@ -101,7 +99,8 @@ class Mail extends React.Component<Props, State> {
     this.setState({
       isLoading: true
     })
-    this.state.gapi.client
+    const client = gapi.client as any
+    client
       .gmail
       .users
       .messages
@@ -113,9 +112,9 @@ class Mail extends React.Component<Props, State> {
           .reduce((acc: any, cur: any) => {
             return { ...acc, [cur.id]: cur }
           }, {})
-        const gapiBatch = this.state.gapi.client.newBatch()
+        const gapiBatch = gapi.client.newBatch()
         Object.values(messages).forEach((message: any) => {
-          const request = this.state.gapi.client.gmail.users.messages.get({
+          const request = (gapi.client as any).gmail.users.messages.get({
             'userId': 'me',
             'id': message.id
           })
@@ -154,8 +153,8 @@ class Mail extends React.Component<Props, State> {
   render() {
     return (<div className="Mail">
       {this.state.isSignedIn
-        ? <Button className="authButton" onClick={() => this.state.gapi.auth2.getAuthInstance().signOut()} disabled={this.state.isLoading}>Sign Out</Button>
-        : <Button className="authButton" onClick={() => this.state.gapi.auth2.getAuthInstance().signIn()} disabled={this.state.isLoading || !this.state.gapi}>Sign In</Button>
+        ? <Button className="authButton" onClick={() => gapi.auth2.getAuthInstance().signOut()} disabled={this.state.isLoading}>Sign Out</Button>
+        : <Button className="authButton" onClick={() => gapi.auth2.getAuthInstance().signIn()} disabled={this.state.isLoading}>Sign In</Button>
       }
       <Button onClick={this.loadMessages} disabled={this.state.isLoading || !this.state.isSignedIn}>Load Messages</Button>
       {this.state.errorMessage && <p style={{ color: 'red', textAlign: 'center' }}>{this.state.errorMessage}</p>}
@@ -164,7 +163,7 @@ class Mail extends React.Component<Props, State> {
         <div><input type="checkbox" checked={this.state.importantOnly} onChange={(event) => this.setState({ importantOnly: event.target.checked })} /> Only Important</div>
       </> }
       { (this.state.isLoading) && <LoadingBar /> }
-      {this.state.gapi && <>
+      { gapi && <>
         {this.state.isSignedIn && (<>
           <div className="mailGroup">
             {Object.values(this.state.messages).map(message => {
