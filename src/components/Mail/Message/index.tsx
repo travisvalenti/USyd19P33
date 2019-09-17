@@ -5,7 +5,8 @@ import Button from '../../ui/Button'
 type Props = {
   message: MessageType,
   isExpanded: boolean,
-  onClick: () => void
+  onClick: () => void,
+  updateMessage: (updatedMessage: MessageType) => void
 }
 
 const Message: React.FC<Props> = (props: Props) => {
@@ -29,13 +30,13 @@ const Message: React.FC<Props> = (props: Props) => {
 
 
   const deleteMessage = (message : any) =>  {
-     const request = (gapi.client as any).gmail.users.messages.delete({
+    const request = (gapi.client as any).gmail.users.messages.trash({
       'userId': 'me',
       'id': message.id
-
-    });
-    request.execute(
-      function(resp : any) { });
+    })
+    request.execute((updatedMessage: MessageType) => {
+      props.updateMessage && props.updateMessage(updatedMessage)
+    })
   }
 
 
@@ -51,7 +52,7 @@ const Message: React.FC<Props> = (props: Props) => {
       </div>
 
       {props.isExpanded && (<div className="mailItemContent">
-        <Button onClick={deleteMessage(props.message)} className="delete" disabled={false} children="Delete Message"/>
+        <Button onClick={() => deleteMessage(props.message)} className="delete">Delete Message</Button>
         <iframe title={props.message.id} srcDoc={content} frameBorder="0" seamless></iframe>
       </div>)}
     </div>

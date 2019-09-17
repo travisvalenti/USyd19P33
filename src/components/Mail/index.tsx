@@ -91,6 +91,23 @@ class Mail extends React.Component<Props, State> {
     }, 10)
   }
 
+  oneUpdateMessage = (updatedMessage: MessageType) => {
+    const messages = { ...this.state.messages }
+    if (!messages || !messages[updatedMessage.id]) return
+
+    const request = (gapi.client as any).gmail.users.messages.get({
+      'userId': 'me',
+      'id': updatedMessage.id
+    })
+
+    request.execute((fetchedMessage: MessageType) => {
+      messages[updatedMessage.id] = fetchedMessage
+      console.log(messages)
+      console.log(updatedMessage)
+      this.setState({ messages })
+    })
+  }
+
   // This function is called whenever the props change or this.setState is called
   render() {
     return (<div className="Mail">
@@ -113,7 +130,7 @@ class Mail extends React.Component<Props, State> {
               (message.labelIds.includes('UNREAD') || this.state.showRead) &&
               (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
               (!this.state.bin || message.labelIds.includes('bin'))&&
-              <Message key={message.id} message={message} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
+              <Message key={message.id} updateMessage={this.oneUpdateMessage} message={message} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
             )}
           </div>
           {Object.values(this.state.messages).length !== 0 && <p style={{ textAlign: 'center' }}>There are more messages, but we haven't made a way to load them yet, sorry.</p>}
