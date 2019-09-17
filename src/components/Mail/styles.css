@@ -17,6 +17,12 @@
     -2px 2px 3px #ccc;
   border-radius: 2px;
   margin: 1em auto;
+  background : white;
+}
+
+.Mail .categoryLabel {
+  text-align: center;
+  padding: 10px;
 }
 
 .Mail .mailItem {
@@ -24,10 +30,17 @@
   border-radius: 3px;
 }
 
+.Mail .mailItem .iframeContainer {
+  width: 100%;
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
 .Mail .mailItem iframe {
   width: 100%;
   margin-top: 5px;
-  height: 60vh;
+  height: auto;
+  overflow: hidden;
 }
 
 .Mail .mailItemHeader {
@@ -55,7 +68,7 @@
   font-size: 0.6rem;
   font-weight: bold;
   color: white;
-  background-color: dodgerblue;
+  background-color: #57a5af;
   border-radius: 1em;
   height: 1em;
   margin-right: 0.5em;

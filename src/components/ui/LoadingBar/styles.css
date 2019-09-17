@@ -11,7 +11,7 @@
 .LoadingBar > div {
   height: 100%;
   border-radius: 5px;
-  background-color: dodgerblue;
+  background-color: #57a5af;
   animation: load 1.8s infinite ease-in-out;
 }
 
