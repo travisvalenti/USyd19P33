@@ -22,18 +22,18 @@ const Message: React.FC<Props> = (props: Props) => {
     content = blob && atob(blob)
   }
 
-  const downloadAttachments = message => {
-    let parts = message.payload.parts;
+  const downloadAttachments = (message : any) => {
+    const parts = message.payload.parts;
     for (let i = 0; i < parts.length; i++) {
-      let part = parts[i];
+      const part = parts[i];
       if (part.filename && part.filename.length > 0) {
-        let attachId = part.body.attachmentId;
-        let request = gapi.client.gmail.users.messages.attachments.get({
+        const attachId = part.body.attachmentId;
+        const request = (gapi.client as any).gmail.users.messages.attachments.get({
           'id': attachId,
           'messageId': message.id,
           'userId': 'me'
         });
-        request.execute(function(attachment){});
+        request.execute(function(attachment : any){});
       }
     }
   }
