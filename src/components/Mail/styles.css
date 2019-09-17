@@ -17,6 +17,12 @@
     -2px 2px 3px #ccc;
   border-radius: 2px;
   margin: 1em auto;
+  background : white;
+}
+
+.Mail .categoryLabel {
+  text-align: center;
+  width: 100%;
 }
 
 .Mail .mailItem {
