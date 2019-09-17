@@ -116,7 +116,14 @@ class Message extends React.Component<Props, State> {
           <span>{from && from.value}</span>
           <br />
           <p className="snippet">{this.props.message.snippet}</p>
-          {this.props.message.labelIds.map(id => <span key={id} className="chip">{this.props.labels[id].name}</span>)}
+          {this.props.message.labelIds
+            .filter(id => this.props.labels[id].type !== 'system')
+            .map(id =>
+              <span key={id} className="chip" style={this.props.labels[id].color ? {
+                backgroundColor: this.props.labels[id].color!.backgroundColor,
+                color: this.props.labels[id].color!.textColor
+              } : undefined}>{this.props.labels[id].name}</span>
+            )}
         </div>
         {this.props.isExpanded && (<div className="mailItemContent">
           { this.state.attachments.map(attachment => {
