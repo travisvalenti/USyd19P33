@@ -1,5 +1,6 @@
 import React from 'react'
 import MessageType from '../../../@types/MessageType'
+import AppContext, { AppContextType } from '../../../AppContext'
 
 type Props = {
   message: MessageType,
@@ -17,6 +18,8 @@ type State = {
 }
 
 class Message extends React.Component<Props, State> {
+  static contextType = AppContext
+  context!: AppContextType
 
   constructor (props: Props) {
     super(props)
@@ -29,8 +32,20 @@ class Message extends React.Component<Props, State> {
   async componentDidUpdate (oldProps: Props) {
 
     // const content = part && atob(part.body.data) // atob decodes a Base64 string
+    if (!this.props.isExpanded && oldProps.isExpanded) {
+      if (this.context.timerContext.isTimerRunning(this.props.message.id)) {
+        this.context.timerContext.removeTimer(this.props.message.id)
+      }
+    }
 
     if (this.props.isExpanded && !oldProps.isExpanded) {
+
+      if (this.context.timerContext.isTimerRunning(this.props.message.id)) {
+        this.context.timerContext.setTimerToTime(this.props.message.id, 60000)
+      } else {
+        this.context.timerContext.addTimer(this.props.message.id, () => alert('You\'ve been on that mail for a while'), 60000)
+      }
+
       let part = this.props.message.payload.parts
         .find(part => part.mimeType === 'text/html' || part.mimeType === 'multipart/alternative')
       if (!part) return
