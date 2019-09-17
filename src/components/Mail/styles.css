@@ -22,7 +22,7 @@
 
 .Mail .categoryLabel {
   text-align: center;
-  width: 100%;
+  padding: 10px;
 }
 
 .Mail .mailItem {
@@ -61,7 +61,7 @@
   font-size: 0.6rem;
   font-weight: bold;
   color: white;
-  background-color: dodgerblue;
+  background-color: #57a5af;
   border-radius: 1em;
   height: 1em;
   margin-right: 0.5em;
