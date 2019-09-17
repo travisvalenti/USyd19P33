@@ -21,6 +21,7 @@ type State = {
   errorMessage?: string,
   showRead: boolean,
   importantOnly: boolean
+  bin: boolean
 }
 
 class Mail extends React.Component<Props, State> {
@@ -31,7 +32,8 @@ class Mail extends React.Component<Props, State> {
       messages: {},
       isLoading: false,
       showRead: false,
-      importantOnly: false
+      importantOnly: false,
+      bin: false
     }
   }
 
@@ -101,6 +103,7 @@ class Mail extends React.Component<Props, State> {
       { Object.keys(this.state.messages).length > 0 && <>
         <div><input type="checkbox" checked={this.state.showRead} onChange={(event) => this.setState({ showRead: event.target.checked })} /> Show Read</div>
         <div><input type="checkbox" checked={this.state.importantOnly} onChange={(event) => this.setState({ importantOnly: event.target.checked })} /> Only Important</div>
+        <div><input type="checkbox" checked={this.state.bin} onChange={(event) => this.setState({ bin: event.target.checked })} /> Bin</div>
       </> }
       { (this.state.isLoading) && <LoadingBar /> }
       { gapi && <>
@@ -109,10 +112,12 @@ class Mail extends React.Component<Props, State> {
             {Object.values(this.state.messages).map(message =>
               (message.labelIds.includes('UNREAD') || this.state.showRead) &&
               (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
+              (!this.state.bin || message.labelIds.includes('bin'))&&
               <Message key={message.id} message={message} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
             )}
           </div>
           {Object.values(this.state.messages).length !== 0 && <p style={{ textAlign: 'center' }}>There are more messages, but we haven't made a way to load them yet, sorry.</p>}
+
         </>)}
 
       </>}

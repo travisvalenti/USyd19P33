@@ -1,5 +1,6 @@
 import React from 'react'
 import MessageType from '../../../@types/MessageType'
+import Button from '../../ui/Button'
 
 type Props = {
   message: MessageType,
@@ -20,7 +21,27 @@ const Message: React.FC<Props> = (props: Props) => {
       .split('_').join('/')
     content = blob && atob(blob)
   }
+
+
+
+
+
+
+
+  const deleteMessage = (message : any) =>  {
+     const request = (gapi.client as any).gmail.users.messages.delete({
+      'userId': 'me',
+      'id': message.id
+
+    });
+    request.execute(
+      function(resp : any) { });
+  }
+
+
+
   return props.message.payload.parts
+
     ? <div id={props.message.id} onClick={() => props.onClick()} className={`mailItem ${props.message.labelIds.includes('UNREAD') ? 'unread' : ''}`}>
       <div className="mailItemHeader">
         <span>{from && from.value}</span>
@@ -28,7 +49,9 @@ const Message: React.FC<Props> = (props: Props) => {
         <p className="snippet">{props.message.snippet}</p>
         {props.message.labelIds.map(label => (<span key={label} className="chip">{label}</span>))}
       </div>
+
       {props.isExpanded && (<div className="mailItemContent">
+        <Button onClick={deleteMessage(props.message)} className="delete" disabled={false} children="Delete Message"/>
         <iframe title={props.message.id} srcDoc={content} frameBorder="0" seamless></iframe>
       </div>)}
     </div>
