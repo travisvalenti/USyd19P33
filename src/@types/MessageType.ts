@@ -5,21 +5,25 @@ export default interface Message {
   labelIds: string[],
   payload: {
     body: any,
-      headers: {
+    headers: {
       name: string,
-        value: string,
-        } [],
-      parts: {
+      value: string,
+    } [],
+    parts: {
       mimeType: string,
-        partId: string,
-          body: {
+      partId: string,
+      filename: {
+        length: number,
+      },
+      body: {
+        attachmentId: string,
         data: string,
-          size: number,
-          },
+        size: number,
+      },
       headers: {
         name: string,
-          value: string,
-          } []
+        value: string,
+      } []
     } []
   }
 }
