@@ -1,11 +1,15 @@
 import React from 'react'
 import MessageType from '../../../@types/MessageType'
+import Label from '../../../@types/Label'
 import AppContext, { AppContextType } from '../../../AppContext'
 
 type Props = {
   message: MessageType,
   isExpanded: boolean,
-  onClick: () => void
+  onClick: () => void,
+  labels: {
+    [id: string]: Label
+  }
 }
 
 type State = {
@@ -27,6 +31,10 @@ class Message extends React.Component<Props, State> {
     this.state = {
       attachments: []
     }
+  }
+
+  componentWillUnmount () {
+    this.context.timerContext.removeTimer(this.props.message.id)
   }
 
   async componentDidUpdate (oldProps: Props) {
@@ -108,11 +116,11 @@ class Message extends React.Component<Props, State> {
           <span>{from && from.value}</span>
           <br />
           <p className="snippet">{this.props.message.snippet}</p>
-          {this.props.message.labelIds.map(label => (<span key={label} className="chip">{label}</span>))}
+          {this.props.message.labelIds.map(id => <span key={id} className="chip">{this.props.labels[id].name}</span>)}
         </div>
         {this.props.isExpanded && (<div className="mailItemContent">
           { this.state.attachments.map(attachment => {
-            return <div style={{textAlign: 'center'}}>
+            return <div key={attachment.filename} style={{textAlign: 'center'}}>
               <a key={attachment.filename} download={attachment.filename} href={"data:" + attachment.mimeType + ';base64,' + attachment.attachment} onClick={e => e.stopPropagation()}>
                 {attachment.filename}
               </a>

@@ -1,6 +1,7 @@
 import React from 'react'
 
 import MessageType from '../../@types/MessageType'
+import Label from '../../@types/Label'
 
 import './styles.css'
 
@@ -21,7 +22,10 @@ type State = {
   errorMessage?: string,
   showRead: boolean,
   importantOnly: boolean,
-  promotionsExpanded: boolean
+  promotionsExpanded: boolean,
+  labels?: {
+    [id: string]: Label
+  }
 }
 
 class Mail extends React.Component<Props, State> {
@@ -33,8 +37,32 @@ class Mail extends React.Component<Props, State> {
       isLoading: false,
       showRead: false,
       importantOnly: false,
-      promotionsExpanded: false
+      promotionsExpanded: false,
     }
+  }
+
+  componentDidMount () {
+    this.loadLabels()
+    this.loadMessages()
+  }
+
+  loadLabels = () => {
+    const client = gapi.client as any
+    client
+      .gmail
+      .users
+      .labels
+      .list({
+        userId: 'me'
+      })
+      .then((response: {body: string}) => {
+        const labels = Object.fromEntries(
+          JSON.parse(response.body).labels
+          .map((label: Label) => ([label.id, label]))
+        )
+
+        this.setState({ labels })
+      })
   }
 
   loadMessages = () => {
@@ -94,7 +122,7 @@ class Mail extends React.Component<Props, State> {
   // This function is called whenever the props change or this.setState is called
   render() {
     const promotions = Object.values(this.state.messages)
-      .filter(message => !message.labelIds.includes('CATEGORY_PROMOTIONS'))
+      .filter(message => message.labelIds.includes('CATEGORY_PROMOTIONS'))
     return (<div className="Mail">
       {this.props.isSignedIn
         ? <Button className="authButton" onClick={() => gapi.auth2.getAuthInstance().signOut()} disabled={this.state.isLoading}>Sign Out</Button>
@@ -107,7 +135,7 @@ class Mail extends React.Component<Props, State> {
         <div><input type="checkbox" checked={this.state.importantOnly} onChange={(event) => this.setState({ importantOnly: event.target.checked })} /> Only Important</div>
       </> }
       { (this.state.isLoading) && <LoadingBar /> }
-      { gapi && <>
+      { !!gapi && !!this.state.messages && !!this.state.labels && <>
         {this.props.isSignedIn && (<>
           <div className="mailGroup">
             {Object.values(this.state.messages)
@@ -115,7 +143,7 @@ class Mail extends React.Component<Props, State> {
               .map(message =>
               (message.labelIds.includes('UNREAD') || this.state.showRead) &&
               (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
-              <Message key={message.id} message={message} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
+              <Message key={message.id} message={message} labels={this.state.labels!} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
             )}
           </div>
           {promotions
@@ -131,7 +159,7 @@ class Mail extends React.Component<Props, State> {
                 .map(message =>
                   (message.labelIds.includes('UNREAD') || this.state.showRead) &&
                   (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
-                  <Message key={message.id} message={message} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)} />
+                  <Message key={message.id} message={message} labels={this.state.labels!} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)} />
                 )}
             </div>
           }
