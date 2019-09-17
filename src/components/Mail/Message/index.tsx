@@ -104,7 +104,9 @@ class Message extends React.Component<Props, State> {
               &nbsp;
             </div>
           }) }
-          <iframe title={this.props.message.id} srcDoc={this.state.content} frameBorder="0" seamless></iframe>
+          <div className="iframeContainer">
+            <iframe title={this.props.message.id} srcDoc={this.state.content} frameBorder="0" seamless onLoad={(frame: any) => frame.target.style.height = (frame.target.contentWindow.document.body.scrollHeight + 25) + 'px'}></iframe>
+          </div>
         </div>)}
       </div>
       : null
