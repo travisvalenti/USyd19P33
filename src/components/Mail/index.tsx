@@ -105,12 +105,28 @@ class Mail extends React.Component<Props, State> {
       { (this.state.isLoading) && <LoadingBar /> }
       { gapi && <>
         {this.props.isSignedIn && (<>
+          {Object.values(this.state.messages)
+            .filter(message => !message.labelIds.includes('CATEGORY_PROMOTIONS'))
+            .length > 0 && 
           <div className="mailGroup">
-            {Object.values(this.state.messages).map(message =>
+            {Object.values(this.state.messages)
+              .filter(message => !message.labelIds.includes('CATEGORY_PROMOTIONS'))
+              .map(message =>
               (message.labelIds.includes('UNREAD') || this.state.showRead) &&
               (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
               <Message key={message.id} message={message} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
             )}
+          </div>
+          }
+          <div className="mailGroup">
+            <div className="categoryLabel">Promotions</div>
+            {Object.values(this.state.messages)
+              .filter(message => message.labelIds.includes('CATEGORY_PROMOTIONS'))
+              .map(message =>
+                (message.labelIds.includes('UNREAD') || this.state.showRead) &&
+                (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
+                <Message key={message.id} message={message} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)} />
+              )}
           </div>
           {Object.values(this.state.messages).length !== 0 && <p style={{ textAlign: 'center' }}>There are more messages, but we haven't made a way to load them yet, sorry.</p>}
         </>)}
