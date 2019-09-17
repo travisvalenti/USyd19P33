@@ -1,5 +1,5 @@
 .Header {
-  background-color: dodgerblue;
+  background-color: #57a5af;
   width: 100%;
   height: 60px;
   line-height: 60px;
@@ -25,8 +25,8 @@
 }
 
 .Header li.selected{
-  background: #1a59d6;
-  height: 63px;
+  background: #5eb685;
+  height: 65px;
   color: white;
 }
 
