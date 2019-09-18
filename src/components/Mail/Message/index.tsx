@@ -102,14 +102,12 @@ class Message extends React.Component<Props, State> {
                   .split('-').join('+')
                   .split('_').join('/')
               });
-              this.setState({
-                isDownloadAttaches: true
-              })
             })
         }
       }))
       this.setState({
-        attachments
+        attachments,
+        isDownloadAttaches: true
       })
     }
   }
