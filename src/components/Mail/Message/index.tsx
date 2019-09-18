@@ -18,7 +18,8 @@ type State = {
     mimeType: string,
     attachment: string
   }[]
-  content?: any
+  content?: any,
+  isDownloadAttaches: boolean
 }
 
 class Message extends React.Component<Props, State> {
@@ -29,7 +30,8 @@ class Message extends React.Component<Props, State> {
     super(props)
 
     this.state = {
-      attachments: []
+      attachments: [],
+      isDownloadAttaches: false
     }
   }
 
@@ -60,6 +62,7 @@ class Message extends React.Component<Props, State> {
       if (part.mimeType === 'multipart/alternative') {
         part = (part as any).parts.find((p: any) => p.mimeType === 'text/html')
       }
+
       const blob = part && part.body.data
         .split('-').join('+')
         .split('_').join('/')
@@ -72,6 +75,8 @@ class Message extends React.Component<Props, State> {
       })
 
       // download attchments
+      if(this.state.isDownloadAttaches === true) return
+
       const parts = this.props.message.payload.parts;
       const attachments = this.state.attachments
 
@@ -96,6 +101,9 @@ class Message extends React.Component<Props, State> {
                 attachment: response.result.data
                   .split('-').join('+')
                   .split('_').join('/')
+              });
+              this.setState({
+                isDownloadAttaches: true
               })
             })
         }
