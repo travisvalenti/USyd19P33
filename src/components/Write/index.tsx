@@ -94,11 +94,6 @@ Content-Type: multipart/mixed;
 ${content}
 
 --gc0p4Jq0M2Yt08jU534c0p
-Content-Type: text/plain;
-
-${content}
-
---gc0p4Jq0M2Yt08jU534c0p
 Content-Type: text/html;
 
 ${html}
@@ -177,7 +172,7 @@ ${html}
             </div>
             <div className="actionButtons">
               <Button onClick={this.saveDraft}>Save Draft</Button>
-              <Button>Send</Button>
+              <Button disabled>Send</Button>
             </div>
             <div style={{ height: '1rem' }}>
               { this.state.loading &&  <LoadingBar /> }
