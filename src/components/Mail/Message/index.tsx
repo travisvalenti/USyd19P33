@@ -19,7 +19,9 @@ type State = {
     mimeType: string,
     attachment: string
   }[]
-  content?: any
+  content?: any,
+  displayMenu: boolean
+
 }
 
 class Message extends React.Component<Props, State> {
@@ -30,8 +32,26 @@ class Message extends React.Component<Props, State> {
     super(props)
 
     this.state = {
+      displayMenu: false,
       attachments: []
     }
+
+    this.showDropdownMenu = this.showDropdownMenu.bind(this);
+    this.hideDropdownMenu = this.hideDropdownMenu.bind(this);
+  }
+
+  showDropdownMenu( event: any ) {
+    event.preventDefault();
+    this.setState({ displayMenu: true }, () => {
+    document.addEventListener('click', this.hideDropdownMenu);
+    });
+  }
+
+  hideDropdownMenu() {
+    this.setState({ displayMenu: false }, () => {
+      document.removeEventListener('click', this.hideDropdownMenu);
+    });
+
   }
 
   componentWillUnmount () {
@@ -119,14 +139,23 @@ class Message extends React.Component<Props, State> {
 
   render () {
     const from = this.props.message.payload.headers.find((header: any) => header.name === 'From')
-
-
     return this.props.message.payload.parts
       ? <div id={this.props.message.id} onClick={() => this.props.onClick()} className={`mailItem ${this.props.message.labelIds.includes('UNREAD') ? 'unread' : ''}`}>
         <div className="mailItemHeader">
           <span>{from && from.value}</span>
+          <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={this.showDropdownMenu}>label</button>
+          {
+            this.state.displayMenu ? (
+          <ul>
+         <li><a className="active" href="#Create Page">test</a></li>
+          </ul>
+        ):
+        (
+          null
+        )
+        }
           <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={() => this.deleteMessage(this.props.message)}>delete</button>
-          <br />
+          <br/>
           <p className="snippet">{this.props.message.snippet}</p>
           {this.props.message.labelIds
             .filter(id => this.props.labels[id].type !== 'system')
