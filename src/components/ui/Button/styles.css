@@ -21,3 +21,11 @@
     color: #ffffff;
     background-color: #787979;
 }
+
+.UserSign {
+    background-color: #3580f1e0;
+    display: block;
+    margin: 0 auto;
+    position: relative;
+    top:25%;
+}

@@ -124,10 +124,6 @@ class Mail extends React.Component<Props, State> {
     const promotions = Object.values(this.state.messages)
       .filter(message => message.labelIds.includes('CATEGORY_PROMOTIONS'))
     return (<div className="Mail">
-      {this.props.isSignedIn
-        ? <Button className="authButton" onClick={() => gapi.auth2.getAuthInstance().signOut()} disabled={this.state.isLoading}>Sign Out</Button>
-        : <Button className="authButton" onClick={() => gapi.auth2.getAuthInstance().signIn()} disabled={this.state.isLoading}>Sign In</Button>
-      }
       <Button onClick={this.loadMessages} disabled={this.state.isLoading || !this.props.isSignedIn}>Load Messages</Button>
       {this.state.errorMessage && <p style={{ color: 'red', textAlign: 'center' }}>{this.state.errorMessage}</p>}
       { Object.keys(this.state.messages).length > 0 && <>
