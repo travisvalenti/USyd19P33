@@ -55,6 +55,7 @@ class Message extends React.Component<Props, State> {
   }
 
   componentWillUnmount () {
+    this.context.timerContext.isTimerRunning(this.props.message.id) &&
     this.context.timerContext.removeTimer(this.props.message.id)
   }
 
