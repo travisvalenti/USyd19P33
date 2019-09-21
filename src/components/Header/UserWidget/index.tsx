@@ -23,12 +23,23 @@ class UserWidget extends React.Component<Props, State> {
     // }
 
     render() {
+        let userProfile : any;
+        if(this.props.isSignedIn) {
+            userProfile = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
+            console.log(userProfile);
+        }
         return (
             <div className="UserWidget">
-            {this.props.isSignedIn 
-                ? <Button className="UserSign" onClick={() => gapi.auth2.getAuthInstance().signOut()}>Sign Out</Button>
-                : <Button className="UserSign" onClick={() => gapi.auth2.getAuthInstance().signIn()}>Sign In</Button>
-            }
+                {this.props.isSignedIn
+                    ? <div className="userButton"><Button className="userSign" onClick={() => gapi.auth2.getAuthInstance().signOut()}>Sign Out</Button></div>
+                    : <div className="userButton"><Button className="userSign" onClick={() => gapi.auth2.getAuthInstance().signIn()}>Sign In</Button></div>
+                }
+                {this.props.isSignedIn &&
+                    <div className="userProfile">
+                        <div className="userName"><p>{userProfile.ig}</p></div>
+                        <div className="userPhoto"><img src={userProfile.Paa} alt="User"/></div>
+                    </div>
+                }
             </div>
         )
     }

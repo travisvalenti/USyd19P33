@@ -22,10 +22,10 @@
     background-color: #787979;
 }
 
-.UserSign {
+.userSign {
     background-color: #3580f1e0;
-    display: block;
-    margin: 0 auto;
-    position: relative;
-    top:25%;
+}
+
+.createNew {
+    width: 128px;
 }

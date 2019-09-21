@@ -2,6 +2,8 @@ import React from 'react'
 
 import './styles.css'
 
+import Button from '../ui/Button'
+
 const Dashboard: React.FC = () => {
   return (
     <div className="Dashboard">
@@ -12,6 +14,7 @@ const Dashboard: React.FC = () => {
           </div>
         </a>
         <span className="label">Search</span>
+        <a href="https://google.com"><Button className="createNew">Search</Button></a>
       </div>
 
       <div className="picture">
@@ -22,6 +25,8 @@ const Dashboard: React.FC = () => {
           </div>
         </a>
         <span className="label">Docs</span>
+        <a href="https://google.com"><Button className="createNew">Search</Button></a><br/>
+        <a href="https://google.com"><Button className="createNew">Create New</Button></a>
       </div>
 
       <div className="picture">
@@ -31,6 +36,8 @@ const Dashboard: React.FC = () => {
           </div>
         </a>
         <span className="label">Drive</span>
+        <a href="https://google.com"><Button className="createNew">Search</Button></a><br/>
+        <a href="https://google.com"><Button className="createNew">Create New</Button></a>
       </div>
     </div>
   )

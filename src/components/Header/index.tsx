@@ -11,7 +11,6 @@ type Props = {
 
 const Header = (props : Props & RouteComponentProps) => {
   console.log(props.location)
-  console.log(props.isSignedIn)
   return (
     <div className="Header">
       <ul>
