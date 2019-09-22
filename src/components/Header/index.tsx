@@ -15,7 +15,7 @@ const Header = (props : Props & RouteComponentProps) => {
     <div className="Header">
       <ul>
         <Link to="/">
-          <li className={props.location.pathname === '/' ? 'selected' : undefined}>
+          <li className={props.location.pathname === '/' || props.location.pathname === '/search' ? 'selected' : undefined}>
             Dashboard
           </li>
         </Link>

@@ -14,14 +14,6 @@ type State = {
 
 class UserWidget extends React.Component<Props, State> {
 
-    // componentDidMount() {
-    //     const client = gapi.client as any;
-    //     client.directory.users.get({})
-    //         .then((response: any) => {
-    //             console.log("response:" + response);
-    //         });
-    // }
-
     render() {
         let userProfile : any;
         if(this.props.isSignedIn) {

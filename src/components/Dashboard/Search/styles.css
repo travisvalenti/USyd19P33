@@ -1,0 +1,21 @@
+.search-div {
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+}
+
+.logo-div {
+    height: 50%;
+    width: 100%;
+}
+
+.logo-div img {
+    margin: auto;
+    margin-top: 14%;
+}
+
+.input-div {
+    height: 50%;
+    width: 100%;
+}
