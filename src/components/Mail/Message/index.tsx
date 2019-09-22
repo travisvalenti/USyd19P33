@@ -133,9 +133,21 @@ class Message extends React.Component<Props, State> {
       'userId': 'me',
       'id': message.id
     })
+    alert(message.labelIds)
     request.execute((updatedMessage: MessageType) => {
       this.props.updateMessage && this.props.updateMessage(updatedMessage)
     })
+  }
+
+  listLabels = () =>  {
+    const request = (gapi.client as any).gmail.users.labels.list({
+      'userId': 'me',
+    })
+
+    request.execute(function(resp : any) {
+        var labels = resp.labels;
+        alert(labels.name)
+      });
   }
 
   render () {
@@ -148,7 +160,7 @@ class Message extends React.Component<Props, State> {
           {
             this.state.displayMenu ? (
           <ul>
-         <li><a className="active" href="#Create Page">test</a></li>
+         <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={() => this.listLabels()}>write</button>
           </ul>
         ):
         (

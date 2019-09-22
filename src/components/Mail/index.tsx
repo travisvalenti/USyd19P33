@@ -22,7 +22,7 @@ type State = {
   errorMessage?: string,
   showRead: boolean,
   importantOnly: boolean,
-  bin:boolean,
+  trash:boolean,
   promotionsExpanded: boolean,
   labels?: {
     [id: string]: Label
@@ -37,7 +37,7 @@ class Mail extends React.Component<Props, State> {
       messages: {},
       isLoading: false,
       showRead: false,
-      bin: false,
+      trash: false,
       importantOnly: false,
       promotionsExpanded: false
     }
@@ -152,7 +152,7 @@ class Mail extends React.Component<Props, State> {
       { Object.keys(this.state.messages).length > 0 && <>
         <div><input type="checkbox" checked={this.state.showRead} onChange={(event) => this.setState({ showRead: event.target.checked })} /> Show Read</div>
         <div><input type="checkbox" checked={this.state.importantOnly} onChange={(event) => this.setState({ importantOnly: event.target.checked })} /> Only Important</div>
-        <div><input type="checkbox" checked={this.state.bin} onChange={(event) => this.setState({ bin: event.target.checked })} /> bin</div>
+        <div><input type="checkbox" checked={this.state.trash} onChange={(event) => this.setState({ trash: event.target.checked })} /> bin</div>
       </> }
       { (this.state.isLoading) && <LoadingBar /> }
       { !!gapi && !!this.state.messages && !!this.state.labels && <>
@@ -163,8 +163,8 @@ class Mail extends React.Component<Props, State> {
               .map(message =>
               (message.labelIds.includes('UNREAD') || this.state.showRead) &&
               (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
-              (!this.state.bin || message.labelIds.includes('BIN'))&&
-              <Message key={message.id} message={message} updateMessage={this.oneUpdateMessage} labels={this.state.labels!} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
+              (!this.state.trash || message.labelIds.includes('TRASH'))&&
+              <Message key={message.id}  updateMessage={this.oneUpdateMessage} message={message} labels={this.state.labels!} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
             )}
           </div>
           {promotions
@@ -180,6 +180,7 @@ class Mail extends React.Component<Props, State> {
                 .map(message =>
                   (message.labelIds.includes('UNREAD') || this.state.showRead) &&
                   (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
+                  (!this.state.trash || message.labelIds.includes('TRASH')) &&
                   <Message key={message.id} updateMessage={this.oneUpdateMessage} message={message} labels={this.state.labels!} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)} />
                 )}
             </div>
