@@ -3,26 +3,33 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 
 import './styles.css'
 
-const Header = ({ location }: RouteComponentProps) => {
-  console.log(location)
+import UserWidget from './UserWidget'
+
+type Props = {
+  isSignedIn : boolean;
+}
+
+const Header = (props : Props & RouteComponentProps) => {
+  console.log(props.location)
   return (
     <div className="Header">
       <ul>
         <Link to="/">
-          <li className={location.pathname === '/' ? 'selected' : undefined}>
+          <li className={props.location.pathname === '/' || props.location.pathname === '/search' ? 'selected' : undefined}>
             Dashboard
           </li>
         </Link>
         <Link to="/mail/write">
-          <li className={location.pathname === '/mail/write' ? 'selected' : undefined}>
+          <li className={props.location.pathname === '/mail/write' ? 'selected' : undefined}>
             <i className="material-icons">edit</i> Write
           </li>
         </Link>
         <Link to="/mail/read">
-          <li className={location.pathname === '/mail/read' ? 'selected' : undefined}>
+          <li className={props.location.pathname === '/mail/read' ? 'selected' : undefined}>
             <i className="material-icons">email</i> Read
           </li>
         </Link>
+        <UserWidget isSignedIn={props.isSignedIn} />
       </ul>
     </div>
   )
