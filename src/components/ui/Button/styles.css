@@ -23,6 +23,7 @@
 }
 
 .buttonHeader {
+    cursor: pointer;
     background-color: #5eb685;
 }
 
