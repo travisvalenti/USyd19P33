@@ -23,8 +23,8 @@ class UserWidget extends React.Component<Props, State> {
         return (
             <div className="UserWidget">
                 {this.props.isSignedIn
-                    ? <div className="userButton"><Button className="Button-header" onClick={() => gapi.auth2.getAuthInstance().signOut()}>Sign Out</Button></div>
-                    : <div className="userButton"><Button className="Button-header" onClick={() => gapi.auth2.getAuthInstance().signIn()}>Sign In</Button></div>
+                    ? <div className="userButton"><Button className="buttonHeader" onClick={() => gapi.auth2.getAuthInstance().signOut()}>Sign Out</Button></div>
+                    : <div className="userButton"><Button className="buttonHeader" onClick={() => gapi.auth2.getAuthInstance().signIn()}>Sign In</Button></div>
                 }
                 {this.props.isSignedIn &&
                     <div className="userProfile">

@@ -22,10 +22,11 @@
     background-color: #787979;
 }
 
-.Button-header {
-    background-color: #3580f1e0;
+.buttonHeader {
+    background-color: #5eb685;
 }
 
-.Button-dashboard {
+.buttonDashboard {
+    cursor: pointer;
     width: 128px;
 }
