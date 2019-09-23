@@ -1,10 +1,7 @@
 import React from 'react'
-
 import MessageType from '../../@types/MessageType'
 import Label from '../../@types/Label'
-
 import './styles.css'
-
 import LoadingBar from '../ui/LoadingBar'
 import Button from '../ui/Button'
 import Message from './Message'
