@@ -150,6 +150,7 @@ class Message extends React.Component<Props, State> {
       });
   }
 
+
   render () {
     const from = this.props.message.payload.headers.find((header: any) => header.name === 'From')
     return this.props.message.payload.parts

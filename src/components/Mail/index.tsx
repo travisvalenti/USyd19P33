@@ -81,11 +81,57 @@ class Mail extends React.Component<Props, State> {
           .reduce((acc: any, cur: any) => {
             return { ...acc, [cur.id]: cur }
           }, {})
+
         const gapiBatch = gapi.client.newBatch()
         Object.values(messages).forEach((message: any) => {
           const request = (gapi.client as any).gmail.users.messages.get({
             'userId': 'me',
-            'id': message.id
+            'id': message.id,
+          })
+          gapiBatch.add(request)
+        })
+        gapiBatch.then((batchResponse: any) => {
+          Object.values(batchResponse.result).forEach((requestResponse: any) => {
+            const mail = JSON.parse(requestResponse.body)
+            messages[mail.id] = mail
+          })
+          this.setState({ messages, isLoading: false })
+        })
+
+      })
+      .catch((error: Error) => {
+        console.error(error)
+        this.setState({
+          isLoading: false,
+          errorMessage: error.message || JSON.parse((error as any).body).error.message
+        })
+      })
+  }
+
+  loadTrash = () => {
+    this.setState({
+      isLoading: true
+    })
+    const client = gapi.client as any
+    client
+      .gmail
+      .users
+      .messages
+      .list({
+        userId: 'me',
+        'labelIds' : 'TRASH'
+      })
+      .then((response: { body: string }) => {
+        const messages = JSON.parse(response.body).messages
+          .reduce((acc: any, cur: any) => {
+            return { ...acc, [cur.id]: cur }
+          }, {})
+
+        const gapiBatch = gapi.client.newBatch()
+        Object.values(messages).forEach((message: any) => {
+          const request = (gapi.client as any).gmail.users.messages.get({
+            'userId': 'me',
+            'id': message.id,
           })
           gapiBatch.add(request)
         })
@@ -145,11 +191,11 @@ class Mail extends React.Component<Props, State> {
         : <Button className="authButton" onClick={() => gapi.auth2.getAuthInstance().signIn()} disabled={this.state.isLoading}>Sign In</Button>
       }
       <Button onClick={this.loadMessages} disabled={this.state.isLoading || !this.props.isSignedIn}>Load Messages</Button>
+      <Button onClick={this.loadTrash} disabled={this.state.isLoading || !this.props.isSignedIn}>Bin</Button>
       {this.state.errorMessage && <p style={{ color: 'red', textAlign: 'center' }}>{this.state.errorMessage}</p>}
       { Object.keys(this.state.messages).length > 0 && <>
         <div><input type="checkbox" checked={this.state.showRead} onChange={(event) => this.setState({ showRead: event.target.checked })} /> Show Read</div>
         <div><input type="checkbox" checked={this.state.importantOnly} onChange={(event) => this.setState({ importantOnly: event.target.checked })} /> Only Important</div>
-        <div><input type="checkbox" checked={this.state.trash} onChange={(event) => this.setState({ trash: event.target.checked })} /> bin</div>
       </> }
       { (this.state.isLoading) && <LoadingBar /> }
       { !!gapi && !!this.state.messages && !!this.state.labels && <>
@@ -160,9 +206,10 @@ class Mail extends React.Component<Props, State> {
               .map(message =>
               (message.labelIds.includes('UNREAD') || this.state.showRead) &&
               (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
-              (!this.state.trash || message.labelIds.includes('TRASH'))&&
+              (!this.state.trash|| message.labelIds.includes('TRASH')) &&
               <Message key={message.id}  updateMessage={this.oneUpdateMessage} message={message} labels={this.state.labels!} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
             )}
+
           </div>
           {promotions
             .length > 0 &&
@@ -177,7 +224,6 @@ class Mail extends React.Component<Props, State> {
                 .map(message =>
                   (message.labelIds.includes('UNREAD') || this.state.showRead) &&
                   (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
-                  (!this.state.trash || message.labelIds.includes('TRASH')) &&
                   <Message key={message.id} updateMessage={this.oneUpdateMessage} message={message} labels={this.state.labels!} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)} />
                 )}
             </div>
