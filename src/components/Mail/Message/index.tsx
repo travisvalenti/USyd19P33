@@ -133,7 +133,6 @@ class Message extends React.Component<Props, State> {
       'userId': 'me',
       'id': message.id
     })
-    alert(message.labelIds)
     request.execute((updatedMessage: MessageType) => {
       this.props.updateMessage && this.props.updateMessage(updatedMessage)
     })
@@ -149,7 +148,6 @@ class Message extends React.Component<Props, State> {
         alert(labels.name)
       });
   }
-
 
   render () {
     const from = this.props.message.payload.headers.find((header: any) => header.name === 'From')
