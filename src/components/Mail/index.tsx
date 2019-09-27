@@ -58,10 +58,10 @@ class Mail extends React.Component<Props, State> {
         const labels = Object.fromEntries(
           JSON.parse(response.body).labels
           .map((label: Label) => ([label.id, label]))
-        )
-
+        )     
         this.setState({ labels })
       })
+
   }
 
   loadMessages = () => {
@@ -143,13 +143,6 @@ class Mail extends React.Component<Props, State> {
           this.setState({ messages, isLoading: false })
         })
 
-      })
-      .catch((error: Error) => {
-        console.error(error)
-        this.setState({
-          isLoading: false,
-          errorMessage: error.message || JSON.parse((error as any).body).error.message
-        })
       })
   }
 

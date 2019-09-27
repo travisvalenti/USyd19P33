@@ -22,7 +22,6 @@ type State = {
   content?: any,
   displayMenu: boolean,
   labeled: boolean
-
 }
 
 class Message extends React.Component<Props, State> {
@@ -47,7 +46,7 @@ class Message extends React.Component<Props, State> {
     this.setState({ displayMenu: true }, () => {
     document.addEventListener('click', this.hideDropdownMenu);
     });
-  }
+}
 
   hideDropdownMenu() {
     this.setState({ displayMenu: false }, () => {
@@ -56,6 +55,7 @@ class Message extends React.Component<Props, State> {
 
   }
 
+  
   componentWillUnmount () {
     this.context.timerContext.isTimerRunning(this.props.message.id) &&
     this.context.timerContext.removeTimer(this.props.message.id)
