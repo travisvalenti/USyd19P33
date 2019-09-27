@@ -21,7 +21,7 @@ type State = {
   }[]
   content?: any,
   displayMenu: boolean,
-  labeled: boolean
+  labeled:boolean
 }
 
 class Message extends React.Component<Props, State> {
@@ -34,7 +34,7 @@ class Message extends React.Component<Props, State> {
     this.state = {
       displayMenu: false,
       attachments: [],
-      labeled: true
+      labeled:false
     }
 
     this.showDropdownMenu = this.showDropdownMenu.bind(this);
@@ -46,7 +46,7 @@ class Message extends React.Component<Props, State> {
     this.setState({ displayMenu: true }, () => {
     document.addEventListener('click', this.hideDropdownMenu);
     });
-}
+  }
 
   hideDropdownMenu() {
     this.setState({ displayMenu: false }, () => {
@@ -55,7 +55,6 @@ class Message extends React.Component<Props, State> {
 
   }
 
-  
   componentWillUnmount () {
     this.context.timerContext.isTimerRunning(this.props.message.id) &&
     this.context.timerContext.removeTimer(this.props.message.id)
@@ -140,6 +139,40 @@ class Message extends React.Component<Props, State> {
     })
   }
 
+  updateLabels = (message : any, label : Label,labeled: Boolean) => {
+   if(labeled){
+    const request =
+    (gapi.client as any)
+    .gmail
+    .users
+    .messages
+    .modify({
+      'userId': 'me',
+      'id': message.id,
+      'removeLabelIds': label.id
+    })
+    request.execute((updatedMessage: MessageType) => {
+      this.props.updateMessage && this.props.updateMessage(updatedMessage)
+    })
+    alert("Conversation removed from "+label.name)
+  }else{
+    const request =
+    (gapi.client as any)
+    .gmail
+    .users
+    .messages
+    .modify({
+      'userId': 'me',
+      'id': message.id,
+      'addLabelIds': label.id
+    })
+    request.execute((updatedMessage: MessageType) => {
+      this.props.updateMessage && this.props.updateMessage(updatedMessage)
+    })
+    alert("Conversation added to "+label.name)
+  }
+  }
+
   render () {
     const from = this.props.message.payload.headers.find((header: any) => header.name === 'From')
     return this.props.message.payload.parts
@@ -151,11 +184,16 @@ class Message extends React.Component<Props, State> {
           {
             this.state.displayMenu ? (
           <ul>
-          {this.props.message.labelIds
+          {Object.keys(this.props.labels)
             .filter(id => this.props.labels[id].type !== 'system')
             .map(id =>
-              <li><input type="checkbox" checked={this.state.labeled}/>{this.props.labels[id].name}</li>
+              <li>
+              <input type="checkbox" id = "check1" checked = {this.props.message.labelIds.includes(this.props.labels[id].id)}
+              onClick={() => this.updateLabels(this.props.message,this.props.labels[id],this.props.message.labelIds.includes(this.props.labels[id].id) )}/>
+              {this.props.labels[id].name}
+              </li>
             )}
+
           </ul>
         ):
         (
