@@ -20,7 +20,8 @@ type State = {
     attachment: string
   }[]
   content?: any,
-  displayMenu: boolean
+  displayMenu: boolean,
+  labeled: boolean
 
 }
 
@@ -33,7 +34,8 @@ class Message extends React.Component<Props, State> {
 
     this.state = {
       displayMenu: false,
-      attachments: []
+      attachments: [],
+      labeled: true
     }
 
     this.showDropdownMenu = this.showDropdownMenu.bind(this);
@@ -138,34 +140,29 @@ class Message extends React.Component<Props, State> {
     })
   }
 
-  listLabels = () =>  {
-    const request = (gapi.client as any).gmail.users.labels.list({
-      'userId': 'me',
-    })
-
-    request.execute(function(resp : any) {
-        var labels = resp.labels;
-        alert(labels.name)
-      });
-  }
-
   render () {
     const from = this.props.message.payload.headers.find((header: any) => header.name === 'From')
     return this.props.message.payload.parts
       ? <div id={this.props.message.id} onClick={() => this.props.onClick()} className={`mailItem ${this.props.message.labelIds.includes('UNREAD') ? 'unread' : ''}`}>
         <div className="mailItemHeader">
           <span>{from && from.value}</span>
+          <div className="droupDownMenu">
           <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={this.showDropdownMenu}>label</button>
           {
             this.state.displayMenu ? (
           <ul>
-         <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={() => this.listLabels()}>write</button>
+          {this.props.message.labelIds
+            .filter(id => this.props.labels[id].type !== 'system')
+            .map(id =>
+              <li><input type="checkbox" checked={this.state.labeled}/>{this.props.labels[id].name}</li>
+            )}
           </ul>
         ):
         (
           null
         )
         }
+        </div>
           <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={() => this.deleteMessage(this.props.message)}>delete</button>
           <br/>
           <p className="snippet">{this.props.message.snippet}</p>
