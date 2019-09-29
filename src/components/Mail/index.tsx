@@ -11,7 +11,8 @@ import Button from '../ui/Button'
 import Message from './Message'
 
 type Props = {
-  isSignedIn: boolean
+  isSignedIn: boolean,
+  queryString: string
 }
 
 type State = {
@@ -33,16 +34,12 @@ type State = {
   labels?: {
     [id: string]: Label
   },
-  query : string,
   queryFailed : boolean
 }
 
 class Mail extends React.Component<Props & RouteComponentProps, State> {
   constructor(props: Props & RouteComponentProps) {
     super(props)
-
-    const queryString = require('query-string');
-    const parsed = queryString.parse(this.props.location.search);
 
     this.state = {
       messages: {},
@@ -55,7 +52,6 @@ class Mail extends React.Component<Props & RouteComponentProps, State> {
         'Social': false,
         'Updates': false,
       },
-      query : parsed.q,
       queryFailed : false
     }
   }
@@ -63,6 +59,12 @@ class Mail extends React.Component<Props & RouteComponentProps, State> {
   componentDidMount () {
     this.loadLabels()
     this.loadMessages()
+  }
+
+  componentDidUpdate (prevProps : Props & RouteComponentProps) {
+    if (prevProps.queryString !== this.props.queryString) {
+      this.loadMessages()
+    }
   }
 
   loadLabels = () => {
@@ -95,14 +97,13 @@ class Mail extends React.Component<Props & RouteComponentProps, State> {
       .messages
       .list({
         userId: 'me',
-        q : this.state.query
+        q : this.props.queryString
       })
       .then((response: { body: string }) => {
         if(JSON.parse(response.body).messages === undefined) {
-          this.setState({queryFailed : true, isLoading : false })
+          this.setState({messages : {}, isLoading : false, queryFailed : true})
           return
         }
-        console.log(JSON.parse(response.body).messages)
         const messages = JSON.parse(response.body).messages
           .reduce((acc: any, cur: any) => {
             return { ...acc, [cur.id]: cur }
@@ -121,8 +122,7 @@ class Mail extends React.Component<Props & RouteComponentProps, State> {
             const mail = JSON.parse(requestResponse.body)
             messages[mail.id] = mail
           })
-          console.log(messages)
-          this.setState({ messages, isLoading: false })
+          this.setState({ messages, isLoading: false, queryFailed: false })
         })
 
       })

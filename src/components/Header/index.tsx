@@ -7,13 +7,12 @@ import SearchBar from './SearchBar'
 import UserWidget from './UserWidget'
 
 type Props = {
-  isSignedIn : boolean;
+  isSignedIn : boolean
+  queryString : string
+  onQueryChange : any
 }
 
 const Header = (props : Props & RouteComponentProps) => {
-
-  const queryString = require('query-string');
-  const parsed = queryString.parse(props.location.search);
 
   return (
     <div className="Header">
@@ -36,7 +35,7 @@ const Header = (props : Props & RouteComponentProps) => {
           </Link>
         </ul>
       </div>
-      <SearchBar query={parsed.q}/>
+      <SearchBar queryString={props.queryString} onQueryChange={props.onQueryChange}/>
       <UserWidget isSignedIn={props.isSignedIn} />
     </div>
   )

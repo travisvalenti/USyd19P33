@@ -5,7 +5,8 @@ import './styles.css'
 // import Button from '../../ui/Button'
 
 type Props = {
-  query : string
+  queryString : string
+  onQueryChange : any
 }
 
 type State = {
@@ -19,7 +20,7 @@ class SearchBar extends React.Component<Props, State> {
   constructor(props : Props) {
     super(props)
 
-    if(props.query === undefined) {
+    if(props.queryString === "") {
       this.state = {
         value : "",
         query : "Search mail"
@@ -28,7 +29,7 @@ class SearchBar extends React.Component<Props, State> {
     else {
       this.state = {
         value : "",
-        query : props.query
+        query : props.queryString
       }
     }
 
@@ -42,7 +43,7 @@ class SearchBar extends React.Component<Props, State> {
 
   handleSubmit(event : any) {
     event.preventDefault();
-    window.location.assign("/mail/read?q=" + this.state.value);
+    this.props.onQueryChange(this.state.value)
   }
 
   render() {
