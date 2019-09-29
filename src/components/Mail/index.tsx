@@ -1,4 +1,5 @@
 import React from 'react'
+import {RouteComponentProps} from 'react-router-dom'
 
 import MessageType from '../../@types/MessageType'
 import Label from '../../@types/Label'
@@ -31,12 +32,17 @@ type State = {
   },
   labels?: {
     [id: string]: Label
-  }
+  },
+  query : string,
+  queryFailed : boolean
 }
 
-class Mail extends React.Component<Props, State> {
-  constructor(props: Props) {
+class Mail extends React.Component<Props & RouteComponentProps, State> {
+  constructor(props: Props & RouteComponentProps) {
     super(props)
+
+    const queryString = require('query-string');
+    const parsed = queryString.parse(this.props.location.search);
 
     this.state = {
       messages: {},
@@ -49,6 +55,8 @@ class Mail extends React.Component<Props, State> {
         'Social': false,
         'Updates': false,
       },
+      query : parsed.q,
+      queryFailed : false
     }
   }
 
@@ -86,13 +94,20 @@ class Mail extends React.Component<Props, State> {
       .users
       .messages
       .list({
-        userId: 'me'
+        userId: 'me',
+        q : this.state.query
       })
       .then((response: { body: string }) => {
+        if(JSON.parse(response.body).messages === undefined) {
+          this.setState({queryFailed : true, isLoading : false })
+          return
+        }
+        console.log(JSON.parse(response.body).messages)
         const messages = JSON.parse(response.body).messages
           .reduce((acc: any, cur: any) => {
             return { ...acc, [cur.id]: cur }
           }, {})
+
         const gapiBatch = gapi.client.newBatch()
         Object.values(messages).forEach((message: any) => {
           const request = (gapi.client as any).gmail.users.messages.get({
@@ -106,6 +121,7 @@ class Mail extends React.Component<Props, State> {
             const mail = JSON.parse(requestResponse.body)
             messages[mail.id] = mail
           })
+          console.log(messages)
           this.setState({ messages, isLoading: false })
         })
 
@@ -168,6 +184,9 @@ class Mail extends React.Component<Props, State> {
         <div><input type="checkbox" checked={this.state.importantOnly} onChange={(event) => this.setState({ importantOnly: event.target.checked })} /> Only Important</div>
       </> }
       { (this.state.isLoading) && <LoadingBar /> }
+      { this.state.queryFailed &&
+        <p style={{ color: 'red', textAlign: 'center' }}>No messages matched your search.</p>
+      }
       { !!gapi && !!this.state.messages && !!this.state.labels && <>
         {this.props.isSignedIn && (<>
           <div className="mailGroup">

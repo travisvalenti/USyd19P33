@@ -46,7 +46,7 @@ class App extends React.Component<{}, State> {
           <Route path="/" render={props => <Header {...props} isSignedIn={this.state.isSignedIn} /> } />
           <Route exact path="/" component={Dashboard} />
           <Route path="/search" component={Search} />
-          <Route path="/mail/read" component={() => <Mail isSignedIn={this.state.isSignedIn} />} />
+          <Route path="/mail/read" render={props => <Mail {...props} isSignedIn={this.state.isSignedIn} />} />
           <Route path="/mail/write" component={Write} />
         </div>
       </Router>

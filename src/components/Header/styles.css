@@ -41,3 +41,9 @@
   position: relative;
   top: 3px;
 }
+
+.navigateItems {
+  width: 550px;
+  height: 60px;
+  float: left;
+}

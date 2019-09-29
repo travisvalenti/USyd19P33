@@ -1,0 +1,40 @@
+.SearchBar {
+  width: 20%;
+  height: 60px;
+  float: left;
+  margin: 0 20px;
+}
+
+.SearchBar form {
+  width: 100%;
+  float: left;
+  position: relative;
+}
+
+.SearchBar input {
+  width: 80%;
+  height: 30px;
+  padding-left: 15px;
+  border-radius: 42px;
+  border: 2px solid #5eb685;
+  background: #eee;
+  outline: none;
+  position: relative;
+  transition: .3s linear;
+}
+
+.SearchBar button {
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 29%;
+  right: 17%;
+}
+
+.SearchBar svg {
+  width: 24px;
+  height: 24px;
+}
