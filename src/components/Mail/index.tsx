@@ -61,12 +61,12 @@ class Mail extends React.Component<Props, State> {
         )
         this.setState({ labels })
       })
-
   }
 
   loadMessages = () => {
     this.setState({
-      isLoading: true
+      isLoading: true,
+      trash :false
     })
     const client = gapi.client as any
     client
@@ -97,7 +97,6 @@ class Mail extends React.Component<Props, State> {
           })
           this.setState({ messages, isLoading: false })
         })
-
       })
       .catch((error: Error) => {
         console.error(error)
@@ -110,7 +109,8 @@ class Mail extends React.Component<Props, State> {
 
   loadTrash = () => {
     this.setState({
-      isLoading: true
+      isLoading: true,
+      trash :true
     })
     const client = gapi.client as any
     client
@@ -142,7 +142,6 @@ class Mail extends React.Component<Props, State> {
           })
           this.setState({ messages, isLoading: false })
         })
-
       })
   }
 
@@ -195,13 +194,16 @@ class Mail extends React.Component<Props, State> {
         {this.props.isSignedIn && (<>
           <div className="mailGroup">
             {Object.values(this.state.messages)
-              .filter(message => !message.labelIds.includes('CATEGORY_PROMOTIONS'))
+              .filter(message => !message.labelIds.includes('CATEGORY_PROMOTIONS') &&
+              (this.state.trash ||
+              !message.labelIds.includes('TRASH'))
+            )
               .map(message =>
               (message.labelIds.includes('UNREAD') || this.state.showRead) &&
               (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
-              <Message key={message.id}  updateMessage={this.oneUpdateMessage} message={message} labels={this.state.labels!} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
+              (!this.state.trash || message.labelIds.includes('TRASH')) &&
+              <Message key={message.id}  updateMessage={this.oneUpdateMessage} message={message} labels={this.state.labels!} trash={this.state.trash} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
             )}
-
           </div>
           {promotions
             .length > 0 &&
@@ -213,10 +215,13 @@ class Mail extends React.Component<Props, State> {
               </span>
             </div>
             { this.state.promotionsExpanded && promotions
+                .filter(message => (this.state.trash || !message.labelIds.includes('TRASH'))
+                )
                 .map(message =>
                   (message.labelIds.includes('UNREAD') || this.state.showRead) &&
                   (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
-                  <Message key={message.id} updateMessage={this.oneUpdateMessage} message={message} labels={this.state.labels!} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)} />
+                  (!this.state.trash || message.labelIds.includes('TRASH')) &&
+                  <Message key={message.id} updateMessage={this.oneUpdateMessage} message={message} labels={this.state.labels!} trash={this.state.trash} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)} />
                 )}
             </div>
           }

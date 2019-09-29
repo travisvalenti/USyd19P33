@@ -6,6 +6,7 @@ import AppContext, { AppContextType } from '../../../AppContext'
 type Props = {
   message: MessageType,
   isExpanded: boolean,
+  trash:boolean,
   onClick: () => void,
   updateMessage: (updatedMessage: MessageType) => void,
   labels: {
@@ -52,7 +53,6 @@ class Message extends React.Component<Props, State> {
     this.setState({ displayMenu: false }, () => {
       document.removeEventListener('click', this.hideDropdownMenu);
     });
-
   }
 
   componentWillUnmount () {
@@ -61,7 +61,6 @@ class Message extends React.Component<Props, State> {
   }
 
   async componentDidUpdate (oldProps: Props) {
-
     // const content = part && atob(part.body.data) // atob decodes a Base64 string
     if (!this.props.isExpanded && oldProps.isExpanded) {
       if (this.context.timerContext.isTimerRunning(this.props.message.id)) {
@@ -101,7 +100,6 @@ class Message extends React.Component<Props, State> {
       await Promise.all(parts.map(async part => {
         if (part.filename && part.filename.length > 0) {
           const attachId: string = part.body.attachmentId
-
           const gmail = (gapi.client as any).gmail
           return gmail
             .users
@@ -127,6 +125,16 @@ class Message extends React.Component<Props, State> {
         attachments
       })
     }
+  }
+
+  untrash = (message : any) =>  {
+    const request = (gapi.client as any).gmail.users.messages.untrash({
+      'userId': 'me',
+      'id': message.id
+    })
+    request.execute((updatedMessage: MessageType) => {
+      this.props.updateMessage && this.props.updateMessage(updatedMessage)
+    })
   }
 
   deleteMessage = (message : any) =>  {
@@ -171,12 +179,6 @@ class Message extends React.Component<Props, State> {
     })
     alert("Conversation added to "+label.name)
   }
-
-  }
-
-  handleDeleteClick = (e:any) => {
-    e.stopPropagation()
-    this.deleteMessage(this.props.message)
   }
 
   handleDroupMenuClick = (e:any) => {
@@ -184,7 +186,7 @@ class Message extends React.Component<Props, State> {
     this.showDropdownMenu(e)
   }
 
-  handleUpdateLabels = (e:any) => {
+  handleClick = (e:any) => {
     e.stopPropagation()
   }
 
@@ -206,13 +208,12 @@ class Message extends React.Component<Props, State> {
               <input type="checkbox" checked = {this.props.message.labelIds.includes(this.props.labels[id].id)}
               onClick={
               (e) =>{this.updateLabels(this.props.message,this.props.labels[id],this.props.message.labelIds.includes(this.props.labels[id].id));
-              this.handleUpdateLabels(e);
+              this.handleClick(e);
               }
               }/>
               {this.props.labels[id].name}
               </li>
             )}
-
           </ul>
         ):
         (
@@ -220,10 +221,12 @@ class Message extends React.Component<Props, State> {
         )
         }
           </div>
-          <div className = "deleteMessage">
-          <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={this.handleDeleteClick}>delete</button>
-
-          </div>
+          {!this.props.trash &&
+          <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={(e) => {this.deleteMessage(this.props.message) ; this.handleClick(e)}}>delete</button>
+          }
+          {this.props.trash &&
+          <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={(e) => {this.untrash(this.props.message) ; this.handleClick(e)}}>move_to_inbox</button>
+          }
           <br/>
           <p className="snippet">{this.props.message.snippet}</p>
           {this.props.message.labelIds
