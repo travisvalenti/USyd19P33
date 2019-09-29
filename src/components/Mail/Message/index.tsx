@@ -171,6 +171,21 @@ class Message extends React.Component<Props, State> {
     })
     alert("Conversation added to "+label.name)
   }
+
+  }
+
+  handleDeleteClick = (e:any) => {
+    e.stopPropagation()
+    this.deleteMessage(this.props.message)
+  }
+
+  handleDroupMenuClick = (e:any) => {
+    e.stopPropagation()
+    this.showDropdownMenu(e)
+  }
+
+  handleUpdateLabels = (e:any) => {
+    e.stopPropagation()
   }
 
   render () {
@@ -180,7 +195,7 @@ class Message extends React.Component<Props, State> {
         <div className="mailItemHeader">
           <span>{from && from.value}</span>
           <div className="droupDownMenu">
-          <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={this.showDropdownMenu}>label</button>
+          <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={this.handleDroupMenuClick}>label</button>
           {
             this.state.displayMenu ? (
           <ul>
@@ -188,8 +203,12 @@ class Message extends React.Component<Props, State> {
             .filter(id => this.props.labels[id].type !== 'system')
             .map(id =>
               <li>
-              <input type="checkbox" id = "check1" checked = {this.props.message.labelIds.includes(this.props.labels[id].id)}
-              onClick={() => this.updateLabels(this.props.message,this.props.labels[id],this.props.message.labelIds.includes(this.props.labels[id].id) )}/>
+              <input type="checkbox" checked = {this.props.message.labelIds.includes(this.props.labels[id].id)}
+              onClick={
+              (e) =>{this.updateLabels(this.props.message,this.props.labels[id],this.props.message.labelIds.includes(this.props.labels[id].id));
+              this.handleUpdateLabels(e);
+              }
+              }/>
               {this.props.labels[id].name}
               </li>
             )}
@@ -200,8 +219,11 @@ class Message extends React.Component<Props, State> {
           null
         )
         }
-        </div>
-          <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={() => this.deleteMessage(this.props.message)}>delete</button>
+          </div>
+          <div className = "deleteMessage">
+          <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={this.handleDeleteClick}>delete</button>
+
+          </div>
           <br/>
           <p className="snippet">{this.props.message.snippet}</p>
           {this.props.message.labelIds

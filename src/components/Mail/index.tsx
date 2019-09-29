@@ -58,7 +58,7 @@ class Mail extends React.Component<Props, State> {
         const labels = Object.fromEntries(
           JSON.parse(response.body).labels
           .map((label: Label) => ([label.id, label]))
-        )     
+        )
         this.setState({ labels })
       })
 
@@ -199,7 +199,6 @@ class Mail extends React.Component<Props, State> {
               .map(message =>
               (message.labelIds.includes('UNREAD') || this.state.showRead) &&
               (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
-              (!this.state.trash|| message.labelIds.includes('TRASH')) &&
               <Message key={message.id}  updateMessage={this.oneUpdateMessage} message={message} labels={this.state.labels!} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
             )}
 
