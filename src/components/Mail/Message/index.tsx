@@ -163,7 +163,6 @@ class Message extends React.Component<Props, State> {
     request.execute((updatedMessage: MessageType) => {
       this.props.updateMessage && this.props.updateMessage(updatedMessage)
     })
-    alert("Conversation removed from "+label.name)
   }else{
     const request =
     (gapi.client as any)
@@ -178,7 +177,6 @@ class Message extends React.Component<Props, State> {
     request.execute((updatedMessage: MessageType) => {
       this.props.updateMessage && this.props.updateMessage(updatedMessage)
     })
-    alert("Conversation added to "+label.name)
   }
   }
 
