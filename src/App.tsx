@@ -5,7 +5,6 @@ import './index.css'
 
 import Header from './components/Header'
 import Dashboard from './components/Dashboard'
-import Search from './components/Dashboard/Search'
 import Mail from './components/Mail'
 import Write from './components/Write'
 import AppContext from './AppContext'
@@ -53,7 +52,6 @@ class App extends React.Component<{}, State> {
         <div className="App">
           <Route path="/" render={props => <Header {...props} queryString={this.state.queryString} onQueryChange={this.handleQueryChange} isSignedIn={this.state.isSignedIn} /> } />
           <Route exact path="/" component={Dashboard} />
-          <Route path="/search" component={Search} />
           <Route path="/mail/read" render={props => <Mail {...props} queryString={this.state.queryString} isSignedIn={this.state.isSignedIn} />} />
           <Route path="/mail/write" component={Write} />
         </div>
