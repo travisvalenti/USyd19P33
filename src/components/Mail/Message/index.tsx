@@ -190,10 +190,13 @@ class Message extends React.Component<Props, State> {
     'messageListVisibility': ['show']
   })
   request.execute((updatedLabel: Label) => {
+    if(!updatedLabel.id){
+      alert("The label name you have chosen already exists. Please try another name");
+      return
+    }
     this.props.updateLabel && this.props.updateLabel(updatedLabel)
     this.modifyMessage(this.props.message,updatedLabel,false)
   })
-
 }
 
   handleDroupMenuClick = (e:any) => {
