@@ -75,11 +75,11 @@
   box-sizing: border-box;
 }
 
- .droupDownMenu {
+ .Mail .droupDownMenu {
     position: relative;
 
 }
-.droupDownMenu ul {
+.Mail .droupDownMenu ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -93,22 +93,19 @@
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
 }
-.droupDownMenu li a {
+.Mail .droupDownMenu li a {
     color: #000;
     text-decoration: none;
 }
-.droupDownMenu li {
+.Mail .droupDownMenu li {
     padding: 8px 16px;
     border-bottom: 1px solid #e5e5e5;
 }
-.droupDownMenu li:last-child {
+.Mail .droupDownMenu li:last-child {
     border-bottom: none;
 }
-.droupDownMenu li:hover {
-    background-color: #e5e5e5;
-    color: white;
-}
-.droupDownMenu .button{
+
+.Mail .droupDownMenu .button{
     width:178px;
     height:18px;
     background-color:#ff3232 ;
@@ -117,7 +114,7 @@
     font-weight:bold;
     color:white;
 }
-.droupDownMenu .button:before{
+.Mail .droupDownMenu .button:before{
     content:"";
     position:absolute;
     width:0px;
@@ -126,4 +123,19 @@
     border-color: white transparent transparent transparent;
     right:6px;
     top:18px;
+}
+
+.Mail .create-NewLabel{
+  padding: 8px 16px;
+  border-bottom: 1px solid #e5e5e5;
+  background-color:white;
+  top:45px;
+  right:0px;
+  width: 200px;
+  border:none;
+}
+
+.Mail .create-NewLabel:hover {
+    background-color: #e5e5e5;
+    color: white;
 }

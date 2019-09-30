@@ -9,6 +9,7 @@ type Props = {
   trash:boolean,
   onClick: () => void,
   updateMessage: (updatedMessage: MessageType) => void,
+  updateLabel: (updatedLabel:Label) => void,
   labels: {
     [id: string]: Label
   }
@@ -147,7 +148,7 @@ class Message extends React.Component<Props, State> {
     })
   }
 
-  updateLabels = (message : any, label : Label,labeled: Boolean) => {
+  modifyMessage = (message : any, label : Label, labeled: Boolean) => {
    if(labeled){
     const request =
     (gapi.client as any)
@@ -157,7 +158,7 @@ class Message extends React.Component<Props, State> {
     .modify({
       'userId': 'me',
       'id': message.id,
-      'removeLabelIds': label.id
+      'removeLabelIds': [label.id]
     })
     request.execute((updatedMessage: MessageType) => {
       this.props.updateMessage && this.props.updateMessage(updatedMessage)
@@ -172,7 +173,7 @@ class Message extends React.Component<Props, State> {
     .modify({
       'userId': 'me',
       'id': message.id,
-      'addLabelIds': label.id
+      'addLabelIds': [label.id]
     })
     request.execute((updatedMessage: MessageType) => {
       this.props.updateMessage && this.props.updateMessage(updatedMessage)
@@ -181,6 +182,20 @@ class Message extends React.Component<Props, State> {
   }
   }
 
+  newLabel = (newLabelName : string) => {
+  const request = (gapi.client as any).gmail.users.labels.create({
+    'userId': 'me',
+    'name': [newLabelName],
+    'labelListVisibility': ['labelShow'],
+    'messageListVisibility': ['show']
+  })
+  request.execute((updatedLabel: Label) => {
+    this.props.updateLabel && this.props.updateLabel(updatedLabel)
+    this.modifyMessage(this.props.message,updatedLabel,false)
+  })
+
+}
+
   handleDroupMenuClick = (e:any) => {
     e.stopPropagation()
     this.showDropdownMenu(e)
@@ -188,6 +203,12 @@ class Message extends React.Component<Props, State> {
 
   handleClick = (e:any) => {
     e.stopPropagation()
+  }
+
+  handleCreateClick = (e:any) => {
+    e.stopPropagation()
+    const newLabel = prompt("Please enter a new label name:");
+    newLabel && this.newLabel(newLabel)
   }
 
   render () {
@@ -207,25 +228,27 @@ class Message extends React.Component<Props, State> {
               <li>
               <input type="checkbox" checked = {this.props.message.labelIds.includes(this.props.labels[id].id)}
               onClick={
-              (e) =>{this.updateLabels(this.props.message,this.props.labels[id],this.props.message.labelIds.includes(this.props.labels[id].id));
+              (e) =>{this.modifyMessage(this.props.message,this.props.labels[id],this.props.message.labelIds.includes(this.props.labels[id].id));
               this.handleClick(e);
               }
               }/>
               {this.props.labels[id].name}
               </li>
             )}
+          <button className="create-NewLabel" onClick={this.handleCreateClick}>Create new</button>
           </ul>
         ):
         (
           null
         )
+
         }
           </div>
           {!this.props.trash &&
           <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={(e) => {this.deleteMessage(this.props.message) ; this.handleClick(e)}}>delete</button>
           }
           {this.props.trash &&
-          <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={(e) => {this.untrash(this.props.message) ; this.handleClick(e)}}>move_to_inbox</button>
+          <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={(e) => {this.untrash(this.props.message) ; this.handleClick(e)}}>delete_outline</button>
           }
           <br/>
           <p className="snippet">{this.props.message.snippet}</p>
