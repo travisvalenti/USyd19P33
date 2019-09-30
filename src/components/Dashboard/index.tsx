@@ -41,7 +41,9 @@ const Dashboard: React.FC = () => {
           </div>
         </a>
         <span className="label">Docs</span>
-        <a href="https://docs.google.com/document/u/0/create"><Button className="buttonDashboard">Create New</Button></a>
+        <div className="createNew">
+          <a href="https://docs.google.com/document/u/0/create"><Button className="buttonDashboard">Create New</Button></a>
+        </div>
       </div>
 
       <div className="picture">
@@ -51,7 +53,9 @@ const Dashboard: React.FC = () => {
           </div>
         </a>
         <span className="label">Sheets</span>
-        <a href="https://docs.google.com/spreadsheets/u/0/create"><Button className="buttonDashboard">Create New</Button></a>
+        <div className="createNew">
+          <a href="https://docs.google.com/spreadsheets/u/0/create"><Button className="buttonDashboard">Create New</Button></a>
+        </div>
       </div>
 
       <div className="picture">
@@ -61,7 +65,9 @@ const Dashboard: React.FC = () => {
           </div>
         </a>
         <span className="label">Slides</span>
-        <a href="https://docs.google.com/presentation/u/0/create"><Button className="buttonDashboard">Create New</Button></a>
+        <div className="createNew">
+          <a href="https://docs.google.com/presentation/u/0/create"><Button className="buttonDashboard">Create New</Button></a>
+        </div>
       </div>
 
     </div>

@@ -24,6 +24,10 @@
   outline: none;
 }
 
+.dropdownArrow button:hover {
+  transform: scale(1.15);
+}
+
 .dropdownArrow svg {
   width: 26px;
   height: 26px;
@@ -63,6 +67,10 @@
   outline: none;
 }
 
+.searchBarInput button:hover {
+  transform: scale(1.1);
+}
+
 .searchBarInput svg {
   width: 24px;
   height: 24px;
@@ -70,8 +78,7 @@
 
 /* dropdownMenu */
 
-.dropdownMenu
-{
+.dropdownMenu {
   float: left;
 	margin-top: 4px;
 	background-color: #57a5af;
@@ -88,8 +95,7 @@
   margin: 10px 0;
 }
 
-.dropdownMenu p:after
-{
+.dropdownMenu p:after {
 	opacity: 0;
 	position: absolute;
 	right: 0;
@@ -99,8 +105,7 @@
 
 .dropdownMenu p:hover:after { opacity: 1; }
 
-.dropdownMenu p:hover
-{
+.dropdownMenu p:hover {
 	background: #5eb685;
 	color: #FFFFFF;
 	cursor: pointer;
