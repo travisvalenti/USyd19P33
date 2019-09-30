@@ -20,7 +20,6 @@
   background: #eee;
   outline: none;
   position: relative;
-  transition: .3s linear;
 }
 
 .SearchBar button {
@@ -32,6 +31,7 @@
   position: absolute;
   top: 29%;
   right: 17%;
+  outline: none;
 }
 
 .SearchBar svg {

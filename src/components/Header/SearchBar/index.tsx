@@ -1,4 +1,5 @@
 import React from 'react'
+import { RouteComponentProps } from 'react-router-dom'
 
 import './styles.css'
 
@@ -14,10 +15,10 @@ type State = {
   query : string
 }
 
-class SearchBar extends React.Component<Props, State> {
+class SearchBar extends React.Component<Props & RouteComponentProps, State> {
 
 
-  constructor(props : Props) {
+  constructor(props : Props & RouteComponentProps) {
     super(props)
 
     if(props.queryString === "") {
@@ -44,6 +45,7 @@ class SearchBar extends React.Component<Props, State> {
   handleSubmit(event : any) {
     event.preventDefault();
     this.props.onQueryChange(this.state.value)
+    this.props.history.push('/mail/read')
   }
 
   render() {

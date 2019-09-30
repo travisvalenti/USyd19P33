@@ -35,7 +35,7 @@ const Header = (props : Props & RouteComponentProps) => {
           </Link>
         </ul>
       </div>
-      <SearchBar queryString={props.queryString} onQueryChange={props.onQueryChange}/>
+      <SearchBar {...props} queryString={props.queryString} onQueryChange={props.onQueryChange}/>
       <UserWidget isSignedIn={props.isSignedIn} />
     </div>
   )
