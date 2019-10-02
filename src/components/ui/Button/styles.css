@@ -21,3 +21,13 @@
     color: #ffffff;
     background-color: #787979;
 }
+
+.buttonHeader {
+    cursor: pointer;
+    background-color: #5eb685;
+}
+
+.buttonDashboard {
+    cursor: pointer;
+    width: 128px;
+}

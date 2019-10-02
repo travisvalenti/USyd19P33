@@ -23,7 +23,9 @@ type State = {
   }[]
   content?: any,
   displayMenu: boolean,
-  labeled:boolean
+  labeled:boolean,
+  hasDownloadedAttachments: boolean
+
 }
 
 class Message extends React.Component<Props, State> {
@@ -34,9 +36,12 @@ class Message extends React.Component<Props, State> {
     super(props)
 
     this.state = {
+
       displayMenu: false,
       attachments: [],
-      labeled:false
+      labeled:false,
+      hasDownloadedAttachments: false
+
     }
 
     this.showDropdownMenu = this.showDropdownMenu.bind(this);
@@ -62,7 +67,6 @@ class Message extends React.Component<Props, State> {
   }
 
   async componentDidUpdate (oldProps: Props) {
-    // const content = part && atob(part.body.data) // atob decodes a Base64 string
     if (!this.props.isExpanded && oldProps.isExpanded) {
       if (this.context.timerContext.isTimerRunning(this.props.message.id)) {
         this.context.timerContext.removeTimer(this.props.message.id)
@@ -83,6 +87,7 @@ class Message extends React.Component<Props, State> {
       if (part.mimeType === 'multipart/alternative') {
         part = (part as any).parts.find((p: any) => p.mimeType === 'text/html')
       }
+
       const blob = part && part.body.data
         .split('-').join('+')
         .split('_').join('/')
@@ -94,38 +99,44 @@ class Message extends React.Component<Props, State> {
         content
       })
 
-      // download attchments
-      const parts = this.props.message.payload.parts;
-      const attachments = this.state.attachments
 
-      await Promise.all(parts.map(async part => {
-        if (part.filename && part.filename.length > 0) {
-          const attachId: string = part.body.attachmentId
-          const gmail = (gapi.client as any).gmail
-          return gmail
-            .users
-            .messages
-            .attachments
-            .get({
-              'id': attachId,
-              'messageId': this.props.message.id,
-              'userId': 'me'
-            })
-            .then((response: any) => {
-              attachments.push({
-                mimeType: part.mimeType,
-                filename: part.filename as string,
-                attachment: response.result.data
-                  .split('-').join('+')
-                  .split('_').join('/')
-              })
-            })
-        }
-      }))
-      this.setState({
-        attachments
-      })
+      if (!this.state.hasDownloadedAttachments) this.downloadAttachments()
     }
+  }
+
+  downloadAttachments = async () => {
+    const parts = this.props.message.payload.parts;
+    const attachments = this.state.attachments
+
+    await Promise.all(parts.map(async part => {
+      if (part.filename && part.filename.length > 0) {
+        const attachId: string = part.body.attachmentId
+
+        const gmail = (gapi.client as any).gmail
+        return gmail
+          .users
+          .messages
+          .attachments
+          .get({
+            'id': attachId,
+            'messageId': this.props.message.id,
+            'userId': 'me'
+          })
+          .then((response: any) => {
+            attachments.push({
+              mimeType: part.mimeType,
+              filename: part.filename as string,
+              attachment: response.result.data
+                .split('-').join('+')
+                .split('_').join('/')
+            });
+          })
+      }
+    }))
+    this.setState({
+      attachments,
+      hasDownloadedAttachments: true
+    })
   }
 
   untrash = (message : any) =>  {

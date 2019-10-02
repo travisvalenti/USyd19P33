@@ -5,6 +5,7 @@ import './index.css'
 
 import Header from './components/Header'
 import Dashboard from './components/Dashboard'
+import Search from './components/Dashboard/Search'
 import Mail from './components/Mail'
 import Write from './components/Write'
 import AppContext from './AppContext'
@@ -36,13 +37,15 @@ class App extends React.Component<{}, State> {
   }
 
   render () {
+
     return <AppContext.Provider value={{
       timerContext: this.state.timerContext
     }}>
         <Router>
         <div className="App">
-          <Route path="/" component={Header} />
+          <Route path="/" render={props => <Header {...props} isSignedIn={this.state.isSignedIn} /> } />
           <Route exact path="/" component={Dashboard} />
+          <Route path="/search" component={Search} />
           <Route path="/mail/read" component={() => <Mail isSignedIn={this.state.isSignedIn} />} />
           <Route path="/mail/write" component={Write} />
         </div>
