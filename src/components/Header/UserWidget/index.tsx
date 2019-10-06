@@ -18,7 +18,6 @@ class UserWidget extends React.Component<Props, State> {
         let userProfile : any;
         if(this.props.isSignedIn) {
             userProfile = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
-            console.log(userProfile);
         }
         return (
             <div className="UserWidget">

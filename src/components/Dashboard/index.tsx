@@ -14,7 +14,6 @@ const Dashboard: React.FC = () => {
           </div>
         </a>
         <span className="label">Search</span>
-        <a href="/search?type=google"><Button className="buttonDashboard">Search</Button></a>
       </div>
 
       <div className="picture">
@@ -24,7 +23,6 @@ const Dashboard: React.FC = () => {
           </div>
         </a>
         <span className="label">Drive</span>
-        <a href="/search?type=drive"><Button className="buttonDashboard">Search</Button></a><br/>
       </div>
 
       <div className="picture">
@@ -34,7 +32,6 @@ const Dashboard: React.FC = () => {
           </div>
         </a>
         <span className="label">Gmail</span>
-        <a href="/search?type=gmail"><Button className="buttonDashboard">Search</Button></a><br/>
       </div>
 
       <div className="picture">
@@ -44,8 +41,9 @@ const Dashboard: React.FC = () => {
           </div>
         </a>
         <span className="label">Docs</span>
-        <a href="/search?type=docs"><Button className="buttonDashboard">Search</Button></a><br/>
-        <a href="https://docs.google.com/document/u/0/create"><Button className="buttonDashboard">Create New</Button></a>
+        <div className="createNew">
+          <a href="https://docs.google.com/document/u/0/create"><Button className="buttonDashboard">Create New</Button></a>
+        </div>
       </div>
 
       <div className="picture">
@@ -55,8 +53,9 @@ const Dashboard: React.FC = () => {
           </div>
         </a>
         <span className="label">Sheets</span>
-        <a href="/search?type=sheets"><Button className="buttonDashboard">Search</Button></a><br/>
-        <a href="https://docs.google.com/spreadsheets/u/0/create"><Button className="buttonDashboard">Create New</Button></a>
+        <div className="createNew">
+          <a href="https://docs.google.com/spreadsheets/u/0/create"><Button className="buttonDashboard">Create New</Button></a>
+        </div>
       </div>
 
       <div className="picture">
@@ -66,8 +65,9 @@ const Dashboard: React.FC = () => {
           </div>
         </a>
         <span className="label">Slides</span>
-        <a href="/search?type=slides"><Button className="buttonDashboard">Search</Button></a><br/>
-        <a href="https://docs.google.com/presentation/u/0/create"><Button className="buttonDashboard">Create New</Button></a>
+        <div className="createNew">
+          <a href="https://docs.google.com/presentation/u/0/create"><Button className="buttonDashboard">Create New</Button></a>
+        </div>
       </div>
 
     </div>
