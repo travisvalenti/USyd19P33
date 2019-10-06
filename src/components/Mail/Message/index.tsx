@@ -81,6 +81,13 @@ class Message extends React.Component<Props, State> {
         this.context.timerContext.addTimer(this.props.message.id, () => alert('You\'ve been on that mail for a while'), 60000)
       }
 
+      if (!this.props.message.payload.parts) {
+        const blob = this.props.message.payload.body.data.split('-').join('+').split('_').join('/')
+        return this.setState({
+          content: `data:text/html;base64,${blob}`
+        })
+      }
+
       let part = this.props.message.payload.parts
         .find(part => part.mimeType === 'text/html' || part.mimeType === 'multipart/alternative')
       if (!part) return
@@ -92,8 +99,7 @@ class Message extends React.Component<Props, State> {
         .split('-').join('+')
         .split('_').join('/')
 
-      let content: string | undefined = ''
-      content = blob && atob(blob)
+      const content = `data:${part!.mimeType};base64,${blob}`
 
       this.setState({
         content
@@ -107,6 +113,8 @@ class Message extends React.Component<Props, State> {
   downloadAttachments = async () => {
     const parts = this.props.message.payload.parts;
     const attachments = this.state.attachments
+
+    if (!parts) return
 
     await Promise.all(parts.map(async part => {
       if (part.filename && part.filename.length > 0) {
@@ -225,8 +233,7 @@ class Message extends React.Component<Props, State> {
 
   render () {
     const from = this.props.message.payload.headers.find((header: any) => header.name === 'From')
-    return this.props.message.payload.parts
-      ? <div id={this.props.message.id} onClick={() => this.props.onClick()} className={`mailItem ${this.props.message.labelIds.includes('UNREAD') ? 'unread' : ''}`}>
+    return <div id={this.props.message.id} onClick={() => this.props.onClick()} className={`mailItem ${this.props.message.labelIds.includes('UNREAD') ? 'unread' : ''}`}>
         <div className="mailItemHeader">
           <span>{from && from.value}</span>
           <div className="droupDownMenu">
@@ -283,11 +290,10 @@ class Message extends React.Component<Props, State> {
             </div>
           }) }
           <div className="iframeContainer">
-            <iframe title={this.props.message.id} srcDoc={this.state.content} frameBorder="0" seamless onLoad={(frame: any) => frame.target.style.height = (frame.target.contentWindow.document.body.scrollHeight + 25) + 'px'}></iframe>
+            <iframe title={this.props.message.id} src={this.state.content} frameBorder="0" seamless ></iframe>
           </div>
         </div>)}
       </div>
-      : null
   }
 }
 

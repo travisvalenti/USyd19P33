@@ -20,9 +20,15 @@ type State = {
   showRead: boolean,
   importantOnly: boolean,
   trash:boolean,
-  promotionsExpanded: boolean,
   labels: {
-    [id: string]: Label,
+    [id: string]: Label
+  },
+  isCategoryExpanded: {
+    [key: string]: boolean,
+    'Promotion': boolean,
+    'Forums': boolean,
+    'Social': boolean,
+    'Updates': boolean
   }
 }
 
@@ -36,8 +42,13 @@ class Mail extends React.Component<Props, State> {
       showRead: false,
       trash: false,
       importantOnly: false,
-      promotionsExpanded: false,
-      labels: {}
+      labels: {},
+      isCategoryExpanded: {
+        'Promotion': false,
+        'Forums': false,
+        'Social': false,
+        'Updates': false,
+      }
     }
   }
 
@@ -187,13 +198,39 @@ class Mail extends React.Component<Props, State> {
       console.log(updatedMessage)
       this.setState({ messages })
     })
+}
 
+  filterMessages = () => {
+
+    return Object.values(this.state.messages)
+      .filter(message => this.state.showRead || message.labelIds.includes('UNREAD'))
+      .filter(message => !this.state.importantOnly || message.labelIds.includes('IMPORTANT'))
+      .filter(message => !this.state.trash || message.labelIds.includes('TRASH'))
+      .filter(message => this.state.trash || !message.labelIds.includes('TRASH'))
   }
 
   // This function is called whenever the props change or this.setState is called
   render() {
-    const promotions = Object.values(this.state.messages)
-      .filter(message => message.labelIds.includes('CATEGORY_PROMOTIONS'))
+    const messages = this.filterMessages()
+
+    const nonCategoryMessages = messages
+      .filter(message => !message.labelIds.includes('CATEGORY_PROMOTIONS'))
+      .filter(message => !message.labelIds.includes('CATEGORY_UPDATES'))
+      .filter(message => !message.labelIds.includes('CATEGORY_SOCIAL'))
+      .filter(message => !message.labelIds.includes('CATEGORY_FORUMS')
+      )
+
+    const categories = {
+      'Promotions': messages
+        .filter(message => message.labelIds.includes('CATEGORY_PROMOTIONS')),
+      'Updates': messages
+        .filter(message => message.labelIds.includes('CATEGORY_UPDATES')),
+      'Social': messages
+        .filter(message => message.labelIds.includes('CATEGORY_SOCIAL')),
+      'Forums': messages
+        .filter(message => message.labelIds.includes('CATEGORY_FORUMS'))
+
+    }
     return (<div className="Mail">
       <Button onClick={this.loadMessages} disabled={this.state.isLoading || !this.props.isSignedIn}>Load Messages</Button>
       <Button onClick={this.loadTrash} disabled={this.state.isLoading || !this.props.isSignedIn}>Bin</Button>
@@ -206,39 +243,35 @@ class Mail extends React.Component<Props, State> {
       { !!gapi && !!this.state.messages && !!this.state.labels && <>
         {this.props.isSignedIn && (<>
           <div className="mailGroup">
-            {Object.values(this.state.messages)
-              .filter(message => !message.labelIds.includes('CATEGORY_PROMOTIONS') &&
-              (this.state.trash ||
-              !message.labelIds.includes('TRASH')
-            )
-            )
+            {nonCategoryMessages
               .map(message =>
-              (message.labelIds.includes('UNREAD') || this.state.showRead) &&
-              (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
-              (!this.state.trash || message.labelIds.includes('TRASH')) &&
               <Message key={message.id} updateLabel={this.oneUpdateLabel}  updateMessage={this.oneUpdateMessage} message={message} labels={this.state.labels!} trash={this.state.trash} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
             )}
           </div>
-          {promotions
-            .length > 0 &&
-            <div className="mailGroup">
-            <div className="categoryLabel">
-              <h3>Promotions ({promotions.length})</h3>
-              <span style={{ color: '#57a5af'}} onClick={() => this.setState({ promotionsExpanded: !this.state.promotionsExpanded})}>
-                { this.state.promotionsExpanded ? 'Minimise Promotions' : 'Expand promotions' }
-              </span>
-            </div>
-            { this.state.promotionsExpanded && promotions
-                .filter(message => (this.state.trash || !message.labelIds.includes('TRASH'))
-                )
-                .map(message =>
-                  (message.labelIds.includes('UNREAD') || this.state.showRead) &&
-                  (!this.state.importantOnly || message.labelIds.includes('IMPORTANT')) &&
-                  (!this.state.trash || message.labelIds.includes('TRASH')) &&
-                  <Message key={message.id} updateLabel={this.oneUpdateLabel}  updateMessage={this.oneUpdateMessage} message={message} labels={this.state.labels!} trash={this.state.trash} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)} />
-                )}
-            </div>
+          { Object.entries(categories)
+            .map(([category, categoryMessages]) =>
+              categoryMessages
+              .length > 0 &&
+              <div className="mailGroup">
+                <div className="categoryLabel">
+                  <h3>{ category } ({categoryMessages.length})</h3>
+                  <span style={{ color: '#57a5af' }} onClick={() => this.setState({
+                      isCategoryExpanded: {
+                        ...this.state.isCategoryExpanded,
+                        [category]: !this.state.isCategoryExpanded[category]
+                      }
+                    })}>
+                    {(this.state.isCategoryExpanded[category]) ? 'Minimise Promotions' : 'Expand promotions'}
+                  </span>
+                </div>
+                {this.state.isCategoryExpanded[category] && categoryMessages
+                  .map(message =>
+                    <Message key={message.id} updateLabel={this.oneUpdateLabel}  updateMessage={this.oneUpdateMessage} message={message} labels={this.state.labels!} trash={this.state.trash} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
+                  )}
+              </div>
+            )
           }
+
           {/* {Object.values(this.state.messages).length !== 0 && <p style={{ textAlign: 'center' }}>There are more messages, but we haven't made a way to load them yet, sorry.</p>} */}
         </>)}
 

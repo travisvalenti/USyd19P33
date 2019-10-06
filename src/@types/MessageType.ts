@@ -4,12 +4,15 @@ export default interface Message {
   snippet ?: string,
   labelIds: string[],
   payload: {
-    body: any,
+    body: {
+      data: string,
+      mimeType: string
+    },
     headers: {
       name: string,
       value: string,
     } [],
-    parts: {
+    parts?: {
       mimeType: string,
       partId: string,
       filename: {
