@@ -3,9 +3,7 @@ import {RouteComponentProps} from 'react-router-dom'
 
 import MessageType from '../../@types/MessageType'
 import Label from '../../@types/Label'
-
 import './styles.css'
-
 import LoadingBar from '../ui/LoadingBar'
 import Button from '../ui/Button'
 import Message from './Message'
@@ -24,6 +22,7 @@ type State = {
   errorMessage?: string,
   showRead: boolean,
   importantOnly: boolean,
+  trash:boolean,
   isCategoryExpanded: {
     [key: string]: boolean,
     'Promotion': boolean,
@@ -31,7 +30,7 @@ type State = {
     'Social': boolean,
     'Updates': boolean
   },
-  labels?: {
+  labels: {
     [id: string]: Label
   },
   queryFailed : boolean
@@ -45,7 +44,9 @@ class Mail extends React.Component<Props & RouteComponentProps, State> {
       messages: {},
       isLoading: false,
       showRead: false,
+      trash: false,
       importantOnly: false,
+      labels: {},
       isCategoryExpanded: {
         'Promotion': false,
         'Forums': false,
@@ -81,14 +82,14 @@ class Mail extends React.Component<Props & RouteComponentProps, State> {
           JSON.parse(response.body).labels
           .map((label: Label) => ([label.id, label]))
         )
-
         this.setState({ labels })
       })
   }
 
   loadMessages = () => {
     this.setState({
-      isLoading: true
+      isLoading: true,
+      trash :false
     })
     const client = gapi.client as any
     client
@@ -113,7 +114,7 @@ class Mail extends React.Component<Props & RouteComponentProps, State> {
         Object.values(messages).forEach((message: any) => {
           const request = (gapi.client as any).gmail.users.messages.get({
             'userId': 'me',
-            'id': message.id
+            'id': message.id,
           })
           gapiBatch.add(request)
         })
@@ -124,13 +125,50 @@ class Mail extends React.Component<Props & RouteComponentProps, State> {
           })
           this.setState({ messages, isLoading: false, queryFailed: false })
         })
-
       })
       .catch((error: Error) => {
         console.error(error)
         this.setState({
           isLoading: false,
           errorMessage: error.message || JSON.parse((error as any).body).error.message
+        })
+      })
+  }
+
+  loadTrash = () => {
+    this.setState({
+      isLoading: true,
+      trash :true
+    })
+    const client = gapi.client as any
+    client
+      .gmail
+      .users
+      .messages
+      .list({
+        userId: 'me',
+        'labelIds' : 'TRASH'
+      })
+      .then((response: { body: string }) => {
+        const messages = JSON.parse(response.body).messages
+          .reduce((acc: any, cur: any) => {
+            return { ...acc, [cur.id]: cur }
+          }, {})
+
+        const gapiBatch = gapi.client.newBatch()
+        Object.values(messages).forEach((message: any) => {
+          const request = (gapi.client as any).gmail.users.messages.get({
+            'userId': 'me',
+            'id': message.id,
+          })
+          gapiBatch.add(request)
+        })
+        gapiBatch.then((batchResponse: any) => {
+          Object.values(batchResponse.result).forEach((requestResponse: any) => {
+            const mail = JSON.parse(requestResponse.body)
+            messages[mail.id] = mail
+          })
+          this.setState({ messages, isLoading: false })
         })
       })
   }
@@ -146,12 +184,45 @@ class Mail extends React.Component<Props & RouteComponentProps, State> {
     }, 10)
   }
 
+  oneUpdateLabel = (updatedLabel: Label) => {
+    const labels = { ...this.state.labels }
+    if (!labels) return
+    const request = (gapi.client as any).gmail.users.labels.get({
+      'userId': 'me',
+      'id': updatedLabel.id
+    })
+    request.execute((fetchedLabel: Label) => {
+      labels[updatedLabel.id] = fetchedLabel
+      console.log(labels)
+      console.log(updatedLabel)
+      this.setState({ labels })
+    })
+
+  }
+
+  oneUpdateMessage = (updatedMessage: MessageType) => {
+    const messages = { ...this.state.messages }
+    if (!messages || !messages[updatedMessage.id]) return
+    const request = (gapi.client as any).gmail.users.messages.get({
+      'userId': 'me',
+      'id': updatedMessage.id
+    })
+
+    request.execute((fetchedMessage: MessageType) => {
+      messages[updatedMessage.id] = fetchedMessage
+      console.log(messages)
+      console.log(updatedMessage)
+      this.setState({ messages })
+    })
+}
+
   filterMessages = () => {
-    
+
     return Object.values(this.state.messages)
-      
       .filter(message => this.state.showRead || message.labelIds.includes('UNREAD'))
       .filter(message => !this.state.importantOnly || message.labelIds.includes('IMPORTANT'))
+      .filter(message => !this.state.trash || message.labelIds.includes('TRASH'))
+      .filter(message => this.state.trash || !message.labelIds.includes('TRASH'))
   }
 
   // This function is called whenever the props change or this.setState is called
@@ -178,6 +249,7 @@ class Mail extends React.Component<Props & RouteComponentProps, State> {
     }
     return (<div className="Mail">
       <Button onClick={this.loadMessages} disabled={this.state.isLoading || !this.props.isSignedIn}>Load Messages</Button>
+      <Button onClick={this.loadTrash} disabled={this.state.isLoading || !this.props.isSignedIn}>Bin</Button>
       {this.state.errorMessage && <p style={{ color: 'red', textAlign: 'center' }}>{this.state.errorMessage}</p>}
       { Object.keys(this.state.messages).length > 0 && <>
         <div><input type="checkbox" checked={this.state.showRead} onChange={(event) => this.setState({ showRead: event.target.checked })} /> Show Read</div>
@@ -192,7 +264,7 @@ class Mail extends React.Component<Props & RouteComponentProps, State> {
           <div className="mailGroup">
             {nonCategoryMessages
               .map(message =>
-              <Message key={message.id} message={message} labels={this.state.labels!} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
+              <Message key={message.id} updateLabel={this.oneUpdateLabel}  updateMessage={this.oneUpdateMessage} message={message} labels={this.state.labels!} trash={this.state.trash} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
             )}
           </div>
           { Object.entries(categories)
@@ -213,7 +285,7 @@ class Mail extends React.Component<Props & RouteComponentProps, State> {
                 </div>
                 {this.state.isCategoryExpanded[category] && categoryMessages
                   .map(message =>
-                    <Message key={message.id} message={message} labels={this.state.labels!} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)} />
+                    <Message key={message.id} updateLabel={this.oneUpdateLabel}  updateMessage={this.oneUpdateMessage} message={message} labels={this.state.labels!} trash={this.state.trash} isExpanded={this.state.expandedMessageId === message.id} onClick={() => this.setExpanded(message.id)}/>
                   )}
               </div>
             )
