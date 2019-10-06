@@ -13,6 +13,7 @@ import TimerContext from './AppContext/TimerContext'
 type State = {
   isSignedIn: boolean
   timerContext: TimerContext
+  queryString: string
 }
 
 class App extends React.Component<{}, State> {
@@ -22,8 +23,11 @@ class App extends React.Component<{}, State> {
 
     this.state = {
       isSignedIn: gapi.auth2.getAuthInstance().isSignedIn.get(),
-      timerContext: new TimerContext()
+      timerContext: new TimerContext(),
+      queryString: ""
     }
+
+    this.handleQueryChange = this.handleQueryChange.bind(this)
   }
 
   componentDidMount () {
@@ -35,15 +39,20 @@ class App extends React.Component<{}, State> {
     )
   }
 
+  handleQueryChange (query : string) {
+    this.setState({queryString : query})
+  }
+
   render () {
+
     return <AppContext.Provider value={{
       timerContext: this.state.timerContext
     }}>
         <Router>
         <div className="App">
-          <Route path="/" component={Header} />
+          <Route path="/" render={props => <Header {...props} queryString={this.state.queryString} onQueryChange={this.handleQueryChange} isSignedIn={this.state.isSignedIn} /> } />
           <Route exact path="/" component={Dashboard} />
-          <Route path="/mail/read" component={() => <Mail isSignedIn={this.state.isSignedIn} />} />
+          <Route path="/mail/read" render={props => <Mail {...props} queryString={this.state.queryString} isSignedIn={this.state.isSignedIn} />} />
           <Route path="/mail/write" component={Write} />
         </div>
       </Router>

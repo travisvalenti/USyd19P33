@@ -8,6 +8,7 @@
     padding: 0.5em 1em;
     color: #ffffff;
     background-color: #57a5af;
+    cursor: pointer;
 }
 
 .Button[disabled]{
@@ -20,4 +21,12 @@
     padding: 0.5em 1em;
     color: #ffffff;
     background-color: #787979;
+}
+
+.Button.buttonHeader {
+    background-color: #5eb685;
+}
+
+.Button.buttonDashboard {
+    width: 128px;
 }
