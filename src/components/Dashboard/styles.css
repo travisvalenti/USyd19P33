@@ -7,7 +7,7 @@
   width: 100%;
 }
 ​
-.Dashboard > div{
+.Dashboard > div {
   width: 4rem;
   margin: 10px;
 }
@@ -35,7 +35,7 @@
 .Dashboard .label {
   margin-top: 3px;
   text-align: center;
-  width: 75%;
+  width: 100%;
   display: inline-block;
   color: #333;
   font-weight: bold;
