@@ -86,7 +86,9 @@
 	width: 250px;
 	height: 290px;
 	font-size: 15px;
-	font-weight: 300;
+  font-weight: 300;
+  position: relative;
+  z-index: 10;
 }
 
 .dropdownMenu p {
