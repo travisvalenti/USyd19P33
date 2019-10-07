@@ -6,10 +6,10 @@ import AppContext, { AppContextType } from '../../../AppContext'
 type Props = {
   message: MessageType,
   isExpanded: boolean,
-  trash:boolean,
+  trash: boolean,
   onClick: () => void,
   updateMessage: (updatedMessage: MessageType) => void,
-  updateLabel: (updatedLabel:Label) => void,
+  updateLabel: (updatedLabel: Label) => void,
   labels: {
     [id: string]: Label
   }
@@ -23,7 +23,7 @@ type State = {
   }[]
   content?: any,
   displayMenu: boolean,
-  labeled:boolean,
+  labeled: boolean,
   hasDownloadedAttachments: boolean
 
 }
@@ -32,14 +32,14 @@ class Message extends React.Component<Props, State> {
   static contextType = AppContext
   context!: AppContextType
 
-  constructor (props: Props) {
+  constructor(props: Props) {
     super(props)
 
     this.state = {
 
       displayMenu: false,
       attachments: [],
-      labeled:false,
+      labeled: false,
       hasDownloadedAttachments: false
 
     }
@@ -48,10 +48,10 @@ class Message extends React.Component<Props, State> {
     this.hideDropdownMenu = this.hideDropdownMenu.bind(this);
   }
 
-  showDropdownMenu( event: any ) {
+  showDropdownMenu(event: any) {
     event.preventDefault();
     this.setState({ displayMenu: true }, () => {
-    document.addEventListener('click', this.hideDropdownMenu);
+      document.addEventListener('click', this.hideDropdownMenu);
     });
   }
 
@@ -61,12 +61,12 @@ class Message extends React.Component<Props, State> {
     });
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.context.timerContext.isTimerRunning(this.props.message.id) &&
-    this.context.timerContext.removeTimer(this.props.message.id)
+      this.context.timerContext.removeTimer(this.props.message.id)
   }
 
-  async componentDidUpdate (oldProps: Props) {
+  async componentDidUpdate(oldProps: Props) {
     if (!this.props.isExpanded && oldProps.isExpanded) {
       if (this.context.timerContext.isTimerRunning(this.props.message.id)) {
         this.context.timerContext.removeTimer(this.props.message.id)
@@ -147,7 +147,7 @@ class Message extends React.Component<Props, State> {
     })
   }
 
-  untrash = (message : any) =>  {
+  untrash = (message: any) => {
     const request = (gapi.client as any).gmail.users.messages.untrash({
       'userId': 'me',
       'id': message.id
@@ -157,7 +157,7 @@ class Message extends React.Component<Props, State> {
     })
   }
 
-  deleteMessage = (message : any) =>  {
+  deleteMessage = (message: any) => {
     const request = (gapi.client as any).gmail.users.messages.trash({
       'userId': 'me',
       'id': message.id
@@ -167,133 +167,129 @@ class Message extends React.Component<Props, State> {
     })
   }
 
-  modifyMessage = (message : any, label : Label, labeled: Boolean) => {
-   if(labeled){
-    const request =
-    (gapi.client as any)
-    .gmail
-    .users
-    .messages
-    .modify({
-      'userId': 'me',
-      'id': message.id,
-      'removeLabelIds': [label.id]
-    })
-    request.execute((updatedMessage: MessageType) => {
-      this.props.updateMessage && this.props.updateMessage(updatedMessage)
-    })
-  }else{
-    const request =
-    (gapi.client as any)
-    .gmail
-    .users
-    .messages
-    .modify({
-      'userId': 'me',
-      'id': message.id,
-      'addLabelIds': [label.id]
-    })
-    request.execute((updatedMessage: MessageType) => {
-      this.props.updateMessage && this.props.updateMessage(updatedMessage)
-    })
-  }
-  }
-
-  newLabel = (newLabelName : string) => {
-  const request = (gapi.client as any).gmail.users.labels.create({
-    'userId': 'me',
-    'name': [newLabelName],
-    'labelListVisibility': ['labelShow'],
-    'messageListVisibility': ['show']
-  })
-  request.execute((updatedLabel: Label) => {
-    if(!updatedLabel.id){
-      alert("The label name you have chosen already exists. Please try another name");
-      return
+  modifyMessage = (message: any, label: Label, labeled: Boolean) => {
+    if (labeled) {
+      const request =
+        (gapi.client as any)
+          .gmail
+          .users
+          .messages
+          .modify({
+            'userId': 'me',
+            'id': message.id,
+            'removeLabelIds': [label.id]
+          })
+      request.execute((updatedMessage: MessageType) => {
+        this.props.updateMessage && this.props.updateMessage(updatedMessage)
+      })
+    } else {
+      const request =
+        (gapi.client as any)
+          .gmail
+          .users
+          .messages
+          .modify({
+            'userId': 'me',
+            'id': message.id,
+            'addLabelIds': [label.id]
+          })
+      request.execute((updatedMessage: MessageType) => {
+        this.props.updateMessage && this.props.updateMessage(updatedMessage)
+      })
     }
-    this.props.updateLabel && this.props.updateLabel(updatedLabel)
-    this.modifyMessage(this.props.message,updatedLabel,false)
-  })
-}
+  }
 
-  handleDroupMenuClick = (e:any) => {
+  newLabel = (newLabelName: string) => {
+    const request = (gapi.client as any).gmail.users.labels.create({
+      'userId': 'me',
+      'name': [newLabelName],
+      'labelListVisibility': ['labelShow'],
+      'messageListVisibility': ['show']
+    })
+    request.execute((updatedLabel: Label) => {
+      if (!updatedLabel.id) {
+        alert("The label name you have chosen already exists. Please try another name");
+        return
+      }
+      this.props.updateLabel && this.props.updateLabel(updatedLabel)
+      this.modifyMessage(this.props.message, updatedLabel, false)
+    })
+  }
+
+  handleDroupMenuClick = (e: any) => {
     e.stopPropagation()
     this.showDropdownMenu(e)
   }
 
-  handleClick = (e:any) => {
+  handleClick = (e: any) => {
     e.stopPropagation()
   }
 
-  handleCreateClick = (e:any) => {
+  handleCreateClick = (e: any) => {
     e.stopPropagation()
     const newLabel = prompt("Please enter a new label name:");
     newLabel && this.newLabel(newLabel)
   }
 
-  render () {
+  render() {
     const from = this.props.message.payload.headers.find((header: any) => header.name === 'From')
     return <div id={this.props.message.id} onClick={() => this.props.onClick()} className={`mailItem ${this.props.message.labelIds.includes('UNREAD') ? 'unread' : ''}`}>
-        <div className="mailItemHeader">
-          <span>{from && from.value}</span>
-          <div className="droupDownMenu">
+      <div className="mailItemHeader">
+        <span>{from && from.value}</span>
+        <div className="droupDownMenu">
           <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={this.handleDroupMenuClick}>label</button>
-          {
-            this.state.displayMenu ? (
-          <ul>
-          {Object.keys(this.props.labels)
-            .filter(id => this.props.labels[id].type !== 'system')
-            .map(id =>
-              <li>
-              <input type="checkbox" checked = {this.props.message.labelIds.includes(this.props.labels[id].id)}
-              onClick={
-              (e) =>{this.modifyMessage(this.props.message,this.props.labels[id],this.props.message.labelIds.includes(this.props.labels[id].id));
-              this.handleClick(e);
-              }
-              }/>
-              {this.props.labels[id].name}
-              </li>
-            )}
-          <button className="create-NewLabel" onClick={this.handleCreateClick}>Create new</button>
-          </ul>
-        ):
-        (
-          null
-        )
-
-        }
-          </div>
-          {!this.props.trash &&
-          <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={(e) => {this.deleteMessage(this.props.message) ; this.handleClick(e)}}>delete</button>
+          {this.state.displayMenu
+            ? (
+              <ul>
+                {Object.keys(this.props.labels)
+                  .filter(id => this.props.labels[id].type !== 'system')
+                  .map(id =>
+                    <li>
+                      <input type="checkbox" checked={this.props.message.labelIds.includes(this.props.labels[id].id)}
+                        onClick={e => {
+                          this.modifyMessage(this.props.message, this.props.labels[id], this.props.message.labelIds.includes(this.props.labels[id].id));
+                          this.handleClick(e);
+                        }} />
+                      {this.props.labels[id].name}
+                    </li>
+                  )}
+                <button className="create-NewLabel" onClick={this.handleCreateClick}>Create new</button>
+              </ul>
+            )
+            : null
           }
-          {this.props.trash &&
-          <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={(e) => {this.untrash(this.props.message) ; this.handleClick(e)}}>delete_outline</button>
-          }
-          <br/>
-          <p className="snippet">{this.props.message.snippet}</p>
-          {this.props.message.labelIds
-            .filter(id => this.props.labels[id].type !== 'system')
-            .map(id =>
-              <span key={id} className="chip" style={this.props.labels[id].color ? {
-                backgroundColor: this.props.labels[id].color!.backgroundColor,
-                color: this.props.labels[id].color!.textColor
-              } : undefined}>{this.props.labels[id].name}</span>
-            )}
         </div>
-        {this.props.isExpanded && (<div className="mailItemContent">
-          { this.state.attachments.map(attachment => {
-            return <div key={attachment.filename} style={{textAlign: 'center'}}>
-              <a key={attachment.filename} download={attachment.filename} href={"data:" + attachment.mimeType + ';base64,' + attachment.attachment} onClick={e => e.stopPropagation()}>
-                {attachment.filename}
-              </a>
-              &nbsp;
-            </div>
-          }) }
-          <div className="iframeContainer">
-            <iframe title={this.props.message.id} src={this.state.content} frameBorder="0" seamless ></iframe>
-          </div>
-        </div>)}
+        {!this.props.trash &&
+          <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={(e) => { this.deleteMessage(this.props.message); this.handleClick(e) }}>delete</button>
+        }
+        {this.props.trash &&
+          <button className="material-icons" style={{ color: 'black', float: 'right' }} onClick={(e) => { this.untrash(this.props.message); this.handleClick(e) }}>delete_outline</button>
+        }
+        <br />
+        <p className="snippet">{this.props.message.snippet}</p>
+        {this.props.message.labelIds
+          .filter(id => this.props.labels[id].type !== 'system')
+          .map(id =>
+            <span key={id} className="chip" style={this.props.labels[id].color ? {
+              backgroundColor: this.props.labels[id].color!.backgroundColor,
+              color: this.props.labels[id].color!.textColor
+            } : undefined}>{this.props.labels[id].name}</span>
+          )}
       </div>
+      {this.props.isExpanded && (<div className="mailItemContent">
+        {this.state.attachments.map(attachment => {
+          return <div key={attachment.filename} style={{ textAlign: 'center' }}>
+            <a key={attachment.filename} download={attachment.filename} href={"data:" + attachment.mimeType + ';base64,' + attachment.attachment} onClick={e => e.stopPropagation()}>
+              {attachment.filename}
+            </a>
+            &nbsp;
+            </div>
+        })}
+        <div className="iframeContainer">
+          <iframe title={this.props.message.id} src={this.state.content} frameBorder="0" seamless ></iframe>
+        </div>
+      </div>)}
+    </div>
   }
 }
 
