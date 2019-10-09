@@ -1,6 +1,8 @@
 import React from 'react'
 import { BrowserRouter as Router, Route } from "react-router-dom"
 
+import config from './config'
+
 import './index.css'
 
 import Header from './components/Header'
@@ -48,7 +50,7 @@ class App extends React.Component<{}, State> {
     return <AppContext.Provider value={{
       timerContext: this.state.timerContext
     }}>
-        <Router>
+        <Router basename={config.basename}>
         <div className="App">
           <Route path="/" render={props => <Header {...props} queryString={this.state.queryString} onQueryChange={this.handleQueryChange} isSignedIn={this.state.isSignedIn} /> } />
           <Route exact path="/" component={Dashboard} />

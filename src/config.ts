@@ -6,5 +6,6 @@ export default {
       discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest'],
       scope: 'https://mail.google.com/',
     }
-  }
+  },
+  basename: '.'
 }
