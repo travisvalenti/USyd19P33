@@ -1,3 +1,8 @@
+/** User Widget
+ * This component displays auth and user information, and is designed to be nested
+ * within the Header component.
+ * It also provides triggers for signing in and out.
+ */
 import React from 'react'
 
 import './styles.css'

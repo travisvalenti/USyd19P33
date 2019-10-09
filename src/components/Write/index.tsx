@@ -1,3 +1,8 @@
+/** Write Component
+ * This component is the sole component responsible for writing and sending mail.
+ * It takes no props.
+ * It manages the state using draft-js, and is also able to save drafts.
+ */
 import React, { Component, ChangeEvent } from 'react'
 import {
   Editor,

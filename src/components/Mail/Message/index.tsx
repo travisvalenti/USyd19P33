@@ -1,3 +1,8 @@
+/** Message Component
+ * This component will display a single email/message.
+ * A message is given as a prop, and attachments are downloaded on mount.
+ * This component also provides callbacks for changing labels and deleting/restoring messages.
+ */
 import React from 'react'
 import MessageType from '../../../@types/MessageType'
 import Label from '../../../@types/Label'

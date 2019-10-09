@@ -1,3 +1,6 @@
+/** Header Component
+ * This component is the top bar, and contains nav links, a search bar and the user widget.
+ */
 import React from 'react'
 import { Link, RouteComponentProps } from 'react-router-dom'
 

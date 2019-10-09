@@ -1,3 +1,8 @@
+/** App Component
+ * This is the primary entry point of the application.
+ * It contains a router to handle pages, and the Header component.
+ * Contexts are injected here to be provided to children classes.
+ */
 import React from 'react'
 import { BrowserRouter as Router, Route } from "react-router-dom"
 

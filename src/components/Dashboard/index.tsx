@@ -1,3 +1,8 @@
+/** Dashboard
+ * The dashboard is the primary landing page of the application, and provides links
+ * to many different google services.
+ * It is simply html.
+ */
 import React from 'react'
 
 import './styles.css'

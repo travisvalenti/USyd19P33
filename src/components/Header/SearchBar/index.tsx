@@ -1,3 +1,8 @@
+/** SearchBar
+ * This component will allow the user to input a text string and it will
+ * redirect to the specified search page on Docs, Sheets, etc.
+ * It is designed to be placed within the Header.
+ */
 import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 

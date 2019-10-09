@@ -1,3 +1,12 @@
+/** Timer Context
+ * This context allows a component to register and unregister a timer,
+ * which can trigger a specfied callback.
+ * It is used so that we can do things such as record session time etc.
+ * 
+ * In the future it will persist the timers between sessions / refreshes,
+ * so that we can do things like manage how long a user has spent on the
+ * mail each day, etc.
+ */
 // TODO: Make timers persist between sessions
 class TimerContext {
   timers: {
