@@ -75,15 +75,12 @@ export default class Write extends Component<{}, State> {
     }
   }
 
-  saveDraft = () => {
-    this.setState({
-      loading: true
-    })
+  makeMime = () => {
     const currentContent = this.state.editorState.getCurrentContent()
 
     const blocks = convertToRaw(
-        this.state.editorState.getCurrentContent()
-      )
+      this.state.editorState.getCurrentContent()
+    )
       .blocks
       .map(block => block.text)
 
@@ -105,6 +102,16 @@ ${html}
 
 --gc0p4Jq0M2Yt08jU534c0p--`
 
+    return mime
+  }
+
+  saveDraft = () => {
+    this.setState({
+      loading: true
+    })
+
+    const mime = this.makeMime()
+
     console.log(mime)
 
     const response = (gapi.client as any)
@@ -119,6 +126,35 @@ ${html}
               .split('+').join('-')
               .split('/').join('_')
           }
+        }
+      })
+    response.then(() => {
+      this.setState({
+        loading: false
+      })
+    })
+      .catch((error: Error) => console.error(error))
+  }
+
+  sendEmail = () => {
+    this.setState({
+      loading: true
+    })
+
+    const mime = this.makeMime()
+
+    console.log(mime)
+
+    const response = (gapi.client as any)
+      .gmail
+      .users
+      .messages
+      .send({
+        userId: 'me',
+        resource: {
+          raw: btoa(mime)
+            .split('+').join('-')
+            .split('/').join('_')
         }
       })
     response.then(() => {
@@ -177,7 +213,7 @@ ${html}
             </div>
             <div className="actionButtons">
               <Button onClick={this.saveDraft}>Save Draft</Button>
-              <Button disabled>Send</Button>
+              <Button onClick={this.sendEmail}>Send</Button>
             </div>
             <div style={{ height: '1rem' }}>
               { this.state.loading &&  <LoadingBar /> }
