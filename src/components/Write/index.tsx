@@ -193,9 +193,6 @@ ${html}
               <i className={ 'material-icons' + (this.state.editorState.getCurrentInlineStyle().contains('BOLD') ? ' active' : '') } onClick={() =>
                 this.onEditorStateChange(RichUtils.toggleInlineStyle(this.state.editorState, 'BOLD'))
               }>format_bold</i>
-              <i className={ 'material-icons' + (this.state.editorState.getCurrentInlineStyle().contains('STRIKETHROUGH') ? ' active' : '') } onClick={() =>
-                this.onEditorStateChange(RichUtils.toggleInlineStyle(this.state.editorState, 'STRIKETHROUGH'))
-              }>format_strikethrough</i>
               <i className={ 'material-icons' + (this.state.editorState.getCurrentInlineStyle().contains('UNDERLINE') ? ' active' : '') } onClick={() =>
                 this.onEditorStateChange(RichUtils.toggleInlineStyle(this.state.editorState, 'UNDERLINE'))
               }>format_underline</i>
